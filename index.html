@@ -1,0 +1,2285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>СВОЯК ❄️</title>
+
+<!-- Firebase SDK (Библиотеки для работы с базой данных) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+<!-- Библиотека для QR-кодов -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<!-- ============================================================ -->
+<!-- COMMON CSS                                                    -->
+<!-- ============================================================ -->
+<style id="commonStyles">
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sky-dk:#050d1a;--ice-blue:#7dd3fc;--teal:#0e7490;--teal-dk:#083344;
+  --gold:#fbbf24;--gold-dk:#b45309;
+  --ink:#e8f0f7;--dim:rgba(232,240,247,.55);
+}
+html,body{min-height:100%}
+body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--ink);background:var(--sky-dk);overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+.bg{position:fixed;inset:0;z-index:-3;overflow:hidden;background:var(--sky-dk)}
+.bg-blobs{position:absolute;inset:-10%;background:
+  radial-gradient(ellipse 60% 40% at 20% 15%, rgba(56,189,248,.35) 0%, transparent 60%),
+  radial-gradient(ellipse 50% 45% at 80% 10%, rgba(125,211,252,.25) 0%, transparent 62%),
+  radial-gradient(ellipse 55% 35% at 50% 90%, rgba(30,64,175,.4) 0%, transparent 65%),
+  radial-gradient(ellipse 40% 30% at 90% 70%, rgba(56,189,248,.2) 0%, transparent 60%),
+  linear-gradient(180deg,#050d1a 0%,#0c1a30 40%,#0a1220 70%,#050d1a 100%);
+  background-size:170% 170%;filter:blur(30px) saturate(1.2);animation:bgDrift 60s ease-in-out infinite alternate}
+@keyframes bgDrift{0%{background-position:0% 0%}50%{background-position:100% 50%}100%{background-position:25% 100%}}
+.xmas-tree{position:absolute;bottom:-10px;right:2%;line-height:1;opacity:.4;font-size:260px;
+  filter:blur(1.5px) drop-shadow(0 0 70px rgba(34,197,94,.6)) drop-shadow(0 0 110px rgba(251,191,36,.4));
+  animation:treeGlow 4s ease-in-out infinite}
+@keyframes treeGlow{0%,100%{filter:blur(1.5px) drop-shadow(0 0 70px rgba(34,197,94,.5)) drop-shadow(0 0 110px rgba(251,191,36,.3))}50%{filter:blur(1px) drop-shadow(0 0 100px rgba(34,197,94,.8)) drop-shadow(0 0 150px rgba(251,191,36,.6))}}
+.tree-star{position:absolute;top:-6%;left:50%;transform:translateX(-50%);font-size:60px;
+  filter:drop-shadow(0 0 30px rgba(251,191,36,.9));animation:starTwinkle 2s ease-in-out infinite}
+@keyframes starTwinkle{0%,100%{opacity:.6;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.15)}}
+.crescent{position:absolute;top:7%;left:5%;font-size:130px;line-height:1;opacity:.7;
+  filter:drop-shadow(0 0 40px rgba(251,191,36,.9)) drop-shadow(0 0 80px rgba(251,191,36,.5));
+  animation:moonFloat 8s ease-in-out infinite}
+@keyframes moonFloat{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-15px) rotate(8deg)}}
+.snowman{position:absolute;bottom:20px;line-height:1;opacity:.5;
+  filter:blur(1.5px) drop-shadow(0 0 30px rgba(255,255,255,.4));
+  animation:snowmanBounce 6s ease-in-out infinite}
+.sm1{left:8%;font-size:110px}
+.sm2{left:52%;font-size:85px;animation-delay:-3s;bottom:15px}
+@keyframes snowmanBounce{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+.snow-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:3}
+.snow-layer::before,.snow-layer::after{content:'';position:absolute;inset:0;background-repeat:repeat;animation:snowdrift 12s linear infinite}
+.snow-layer::before{background-image:
+  radial-gradient(2px 2px at 20px 30px,#fff,transparent),
+  radial-gradient(1.5px 1.5px at 40px 70px,rgba(255,255,255,.9),transparent),
+  radial-gradient(2px 2px at 90px 40px,#fff,transparent),
+  radial-gradient(1.5px 1.5px at 130px 80px,rgba(255,255,255,.8),transparent),
+  radial-gradient(2px 2px at 160px 30px,#fff,transparent),
+  radial-gradient(1.5px 1.5px at 180px 120px,rgba(255,255,255,.7),transparent),
+  radial-gradient(2px 2px at 220px 60px,#fff,transparent);
+  background-size:260px 200px;opacity:.65}
+.snow-layer::after{background-image:
+  radial-gradient(3px 3px at 50px 100px,rgba(255,255,255,.7),transparent),
+  radial-gradient(2px 2px at 150px 50px,rgba(255,255,255,.5),transparent),
+  radial-gradient(2.5px 2.5px at 250px 150px,rgba(255,255,255,.6),transparent),
+  radial-gradient(2px 2px at 350px 80px,rgba(255,255,255,.4),transparent);
+  background-size:400px 300px;animation-duration:20s;opacity:.5}
+@keyframes snowdrift{from{background-position:0 0}to{background-position:0 200px}}
+.bg::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:4;background:
+  radial-gradient(ellipse at 50% 20%,rgba(125,211,252,.08) 0%,transparent 55%),
+  radial-gradient(ellipse at center,transparent 30%,rgba(3,8,18,.7) 100%)}
+
+.garland{position:fixed;top:72px;left:0;right:0;height:50px;z-index:15;pointer-events:none;overflow:hidden}
+.garland-wire{position:absolute;top:16px;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 0%,rgba(200,200,220,.55) 5%,rgba(200,200,220,.55) 95%,transparent 100%)}
+.light{position:absolute;top:8px;width:14px;height:14px;border-radius:50%;
+  animation:lightGlow 2s ease-in-out infinite;transform:translateX(-50%)}
+@keyframes lightGlow{
+  0%,100%{opacity:.55;transform:translateX(-50%) scale(1);filter:brightness(.9)}
+  50%{opacity:1;transform:translateX(-50%) scale(1.35);filter:brightness(1.4)}}
+
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(6deg)}}
+@keyframes hit{0%{transform:scale(.9);opacity:0}60%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+
+.overlay-full{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(circle at center,rgba(15,36,66,.95),rgba(3,8,18,.98));backdrop-filter:blur(12px);text-align:center;padding:22px;overflow-y:auto}
+.overlay-full.show{display:flex;animation:fade .4s ease}
+
+.round-banner{position:fixed;inset:0;z-index:110;display:none;align-items:center;justify-content:center;
+  background:radial-gradient(circle at center,rgba(15,36,66,.92),rgba(3,8,18,.96));backdrop-filter:blur(10px);pointer-events:none}
+.round-banner.show{display:flex;animation:roundIn .5s cubic-bezier(.2,1,.4,1)}
+@keyframes roundIn{from{opacity:0;transform:scale(1.05)}to{opacity:1;transform:scale(1)}}
+.rb-title{font-size:clamp(48px,10vw,160px);font-weight:900;letter-spacing:.2em;color:var(--gold);
+  text-shadow:0 0 80px rgba(251,191,36,.8);animation:roundPulse 1.2s ease-in-out}
+.rb-sub{margin-top:20px;font-size:clamp(16px,2.4vw,36px);color:#bae6fd;letter-spacing:.2em;font-weight:700;text-align:center}
+@keyframes roundPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+.intro-list{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.intro-item{font-size:clamp(20px,3.5vw,42px);font-weight:900;color:#fff;letter-spacing:.1em;text-transform:uppercase;
+  opacity:0;transform:translateY(-50px);animation:dropIn .6s cubic-bezier(.2,1,.4,1) forwards;
+  text-shadow:0 0 20px rgba(125,211,252,.6)}
+@keyframes dropIn{to{opacity:1;transform:translateY(0)}}
+.intro-title{font-size:clamp(30px,5vw,64px);font-weight:900;color:var(--gold);letter-spacing:.2em;
+  text-shadow:0 0 60px rgba(251,191,36,.8);margin-bottom:20px}
+
+.role-app{position:relative;min-height:100vh}
+.role-app[hidden]{display:none !important}
+
+.site-footer{max-width:1640px;margin:0 auto;padding:24px;text-align:center;color:rgba(232,240,247,.42);font-size:12.5px;line-height:1.9;
+  position:relative;z-index:1;border-top:1px solid rgba(125,211,252,.12)}
+.site-footer b{color:var(--ice-blue);font-weight:800}
+.site-footer a{color:#7dd3fc;text-decoration:none;font-weight:600;transition:.3s}
+.site-footer a:hover{color:#fff;text-decoration:underline}
+.site-footer .leaf-icon{display:inline-block;margin:0 4px;opacity:.75}
+.role-switch-link{display:inline-block;margin-top:10px;padding:6px 14px;border-radius:10px;
+  background:rgba(125,211,252,.08);border:1px solid rgba(125,211,252,.3);
+  color:var(--ice-blue) !important;font-size:11px !important;font-weight:700 !important;letter-spacing:.1em;
+  text-decoration:none !important;cursor:pointer;transition:.3s}
+.role-switch-link:hover{background:rgba(125,211,252,.2);color:#fff !important;text-decoration:none !important}
+</style>
+
+<!-- ============================================================ -->
+<!-- ROLE SELECTOR CSS                                             -->
+<!-- ============================================================ -->
+<style id="roleSelectorStyles">
+#roleSelector{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:20px}
+#roleSelector[hidden]{display:none !important}
+.rs-card{width:min(680px,100%);padding:clamp(28px,5vw,56px);border-radius:28px;text-align:center;
+  background:rgba(12,26,48,.78);backdrop-filter:blur(20px);border:1px solid rgba(125,211,252,.32);
+  box-shadow:0 40px 110px rgba(0,0,0,.75);animation:pop .55s cubic-bezier(.2,1.2,.4,1)}
+.rs-title{font-size:clamp(38px,7vw,80px);font-weight:900;letter-spacing:.16em;
+  background:linear-gradient(180deg,#fff,#7dd3fc 45%,#0284c7);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 40px rgba(125,211,252,.6))}
+.rs-title::after{content:' ❄️';-webkit-text-fill-color:initial;color:#7dd3fc;filter:drop-shadow(0 0 18px rgba(125,211,252,.8))}
+.rs-sub{margin:14px 0 32px;font-size:13px;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.rs-options{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:640px){.rs-options{grid-template-columns:1fr}}
+.rs-btn{display:flex;flex-direction:column;align-items:center;gap:10px;padding:clamp(20px,3vw,32px) clamp(16px,2vw,24px);
+  border-radius:20px;cursor:pointer;color:var(--ink);font-family:inherit;font-weight:800;
+  background:linear-gradient(180deg,rgba(125,211,252,.10),rgba(125,211,252,.03));
+  border:1px solid rgba(125,211,252,.25);transition:all .4s cubic-bezier(.2,1,.4,1)}
+.rs-btn:hover{transform:translateY(-4px);border-color:var(--ice-blue);color:#fff;
+  background:linear-gradient(180deg,rgba(125,211,252,.2),rgba(14,116,144,.35));
+  box-shadow:0 18px 44px rgba(56,189,248,.35),inset 0 1px 0 rgba(255,255,255,.2)}
+.rs-ico{font-size:clamp(36px,5vw,54px);filter:drop-shadow(0 0 24px rgba(125,211,252,.5))}
+.rs-name{font-size:clamp(15px,1.6vw,19px);letter-spacing:.08em}
+.rs-desc{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:600}
+.rs-btn:hover .rs-desc{color:rgba(232,240,247,.8)}
+.rs-hint{margin-top:26px;font-size:11.5px;line-height:1.7;color:rgba(232,240,247,.4);letter-spacing:.03em}
+.rs-hint b{color:rgba(125,211,252,.85)}
+</style>
+
+<!-- ============================================================ -->
+<!-- HOST CSS                                                      -->
+<!-- ============================================================ -->
+<style id="hostStyles" media="not all">
+#hostApp .xmas-tree{font-size:280px}
+#hostApp .crescent{top:8%;left:6%;font-size:140px}
+#hostApp .sm1{font-size:110px}
+#hostApp .sm2{left:55%;font-size:85px}
+
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:14px 24px;background:linear-gradient(180deg,rgba(5,13,26,.94),rgba(5,13,26,.6));
+  backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,211,252,.2);box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.logo{font-size:clamp(17px,2vw,26px);font-weight:900;letter-spacing:.16em;
+  background:linear-gradient(180deg,#fff,#7dd3fc 45%,#0284c7);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 22px rgba(125,211,252,.55))}
+.logo::after{content:' ❄️';-webkit-text-fill-color:initial;color:#7dd3fc;filter:drop-shadow(0 0 12px rgba(125,211,252,.7))}
+.role{font-size:10.5px;letter-spacing:.22em;font-weight:800;padding:5px 11px;border-radius:999px;
+  color:var(--ice-blue);border:1px solid rgba(125,211,252,.4);background:rgba(125,211,252,.1)}
+.round-btns{display:flex;gap:4px;padding:4px;background:rgba(0,0,0,.35);border-radius:12px;border:1px solid rgba(125,211,252,.15)}
+.round-btn{padding:7px 12px;border:1px solid transparent;background:transparent;color:var(--dim);
+  font-family:inherit;font-weight:700;font-size:12px;border-radius:8px;cursor:pointer;
+  transition:all .35s cubic-bezier(.2,1,.4,1);white-space:nowrap}
+.round-btn:hover{color:var(--ice-blue);background:rgba(125,211,252,.08)}
+.round-btn.active{background:linear-gradient(180deg,rgba(56,189,248,.35),rgba(14,116,144,.5));
+  color:#fff;border-color:var(--ice-blue);box-shadow:0 0 14px rgba(56,189,248,.4)}
+.round-btn.final{color:rgba(251,191,36,.7)}
+.round-btn.final:hover{color:var(--gold);background:rgba(251,191,36,.08)}
+.round-btn.final.active{background:linear-gradient(180deg,rgba(251,191,36,.3),rgba(180,83,9,.5));
+  color:var(--gold);border-color:var(--gold);box-shadow:0 0 14px rgba(251,191,36,.4)}
+.round-btn.pulse{animation:btnPulse 1.5s ease-in-out infinite}
+@keyframes btnPulse{0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,.6)}50%{box-shadow:0 0 0 8px rgba(251,191,36,0)}}
+.player-count{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ice-blue);font-weight:700;background:rgba(0,0,0,.3);padding:4px 8px;border-radius:8px;border:1px solid rgba(125,211,252,.2)}
+.player-count select{background:transparent;border:none;color:#fff;font-family:inherit;font-weight:700;font-size:14px;outline:none;cursor:pointer}
+.player-count option{background:var(--sky-dk);color:#fff}
+.conn{display:flex;align-items:center;gap:8px;margin-left:6px;font-size:12.5px;color:var(--dim)}
+.conn .dot{width:9px;height:9px;border-radius:50%;background:#3a4a5f;transition:.3s}
+.conn.on .dot{background:var(--ice-blue);animation:hostPing 1.8s infinite}
+@keyframes hostPing{0%{box-shadow:0 0 0 0 rgba(125,211,252,.65)}70%{box-shadow:0 0 0 10px rgba(125,211,252,0)}100%{box-shadow:0 0 0 0 rgba(125,211,252,0)}}
+.spacer{flex:1 1 auto}
+.btn{font-family:inherit;font-weight:700;font-size:13px;letter-spacing:.05em;padding:10px 18px;border-radius:11px;cursor:pointer;
+  color:var(--ink);border:1px solid rgba(125,211,252,.4);
+  background:linear-gradient(180deg,rgba(21,94,117,.75),rgba(8,47,73,.95));
+  transition:all .3s cubic-bezier(.2,1,.4,1);white-space:nowrap}
+.btn:hover{border-color:var(--ice-blue);color:#fff;box-shadow:0 0 26px rgba(125,211,252,.5);transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(180deg,#bae6fd,#38bdf8 50%,#0284c7);color:#062033;border-color:#e0f2fe;
+  box-shadow:0 6px 26px rgba(56,189,248,.55)}
+.btn.primary:hover{color:#041420;box-shadow:0 10px 38px rgba(125,211,252,.7);transform:translateY(-2px)}
+.btn:disabled{opacity:.4;cursor:default;transform:none;box-shadow:none}
+.btn-play{background:radial-gradient(circle at top, #fde68a, #fbbf24 50%, #b45309); color:#2a1408; border:2px solid #fff3cf; animation:hostPlayPulse 1.5s infinite}
+@keyframes hostPlayPulse{0%,100%{box-shadow:0 0 20px rgba(251,191,36,.5)}50%{box-shadow:0 0 40px rgba(251,191,36,.9)}}
+.layout{max-width:1640px;margin:0 auto;padding:22px 24px 20px;display:flex;flex-direction:column;gap:24px;position:relative;z-index:1}
+.board-scroll{overflow-x:auto;padding-bottom:16px}
+.board-scroll::-webkit-scrollbar{height:8px}
+.board-scroll::-webkit-scrollbar-track{background:rgba(0,0,0,.2);border-radius:4px}
+.board-scroll::-webkit-scrollbar-thumb{background:rgba(125,211,252,.3);border-radius:4px}
+.board-scroll::-webkit-scrollbar-thumb:hover{background:rgba(125,211,252,.5)}
+#board{display:grid;gap:10px;width:100%;transition:opacity .4s}
+.cat{display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;border-radius:14px;
+  background:linear-gradient(180deg,#1a5c3a,#0f3d24);border:1px solid rgba(125,211,252,.45);
+  font-size:clamp(12px,1.1vw,15px);font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.25;
+  color:#d4f1e0;text-shadow:0 2px 10px rgba(0,0,0,.6);height:72px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 10px 26px rgba(0,0,0,.5);
+  transition:all .4s cubic-bezier(.2,1,.4,1)}
+.cell{border-radius:14px;border:1px solid rgba(125,211,252,.4);
+  background:linear-gradient(180deg,#0e7490,#083344);
+  color:#e0f2fe;font-family:inherit;font-weight:900;font-size:clamp(18px,2.2vw,32px);cursor:pointer;height:72px;
+  transition:all .35s cubic-bezier(.2,1,.4,1);
+  text-shadow:0 2px 10px rgba(0,0,0,.75);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 10px 26px rgba(0,0,0,.5)}
+.cell:hover:not(.done){transform:translateY(-4px);border-color:#67e8f9;color:#fff;
+  box-shadow:0 0 0 2px rgba(103,232,249,.4),0 20px 48px rgba(6,182,212,.5),inset 0 1px 0 rgba(255,255,255,.3);
+  background:linear-gradient(180deg,#06b6d4,#0e7490)}
+.cell.done{background:linear-gradient(180deg,rgba(15,30,55,.9),rgba(6,14,26,.95));
+  color:transparent;border-color:rgba(255,255,255,.05);cursor:default;box-shadow:none;transform:none}
+.panel{background:rgba(12,26,48,.78);border:1px solid rgba(125,211,252,.22);border-radius:20px;padding:18px 24px;
+  backdrop-filter:blur(18px);box-shadow:0 24px 60px rgba(0,0,0,.6);width:100%}
+.panel-title{font-size:11px;letter-spacing:.22em;color:var(--ice-blue);font-weight:800;margin-bottom:14px;text-transform:uppercase;text-align:center}
+#players{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:14px}
+.pcard{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;
+  background:linear-gradient(90deg,rgba(125,211,252,.08),rgba(125,211,252,.02));
+  border:1px solid rgba(125,211,252,.15);border-left:4px solid var(--pc,#888);
+  transition:all .3s cubic-bezier(.2,1,.4,1)}
+.pav{width:36px;height:36px;flex:0 0 36px;border-radius:10px;display:grid;place-items:center;font-weight:900;font-size:15px;
+  color:#0a1220;background:var(--pc,#888);box-shadow:0 0 20px color-mix(in srgb,var(--pc) 60%,transparent)}
+.pmain{flex:1;min-width:0}
+.pname{width:100%;background:transparent;border:none;outline:none;color:#fff;font-family:inherit;font-size:15px;font-weight:800;
+  padding:2px 0;border-bottom:1px dashed rgba(125,211,252,.2);transition:.3s}
+.pname:focus{border-bottom-color:var(--ice-blue)}
+.pstate{font-size:10.5px;color:var(--dim);margin-top:3px}
+.pstate.live{color:var(--ice-blue);font-weight:700}
+.pscore{font-size:24px;font-weight:900;color:var(--gold);min-width:60px;text-align:right;font-variant-numeric:tabular-nums;
+  text-shadow:0 0 18px rgba(251,191,36,.4)}
+.pscore.neg{color:#fca5a5}
+.panel-hint{text-align:center;font-size:11.5px;line-height:1.6;color:rgba(232,240,247,.4)}
+.panel-hint b{color:rgba(125,211,252,.85)}
+
+.overlay{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:22px;
+  background:radial-gradient(circle at 50% 40%,rgba(15,36,66,.94),rgba(3,8,18,.98) 72%);
+  backdrop-filter:blur(14px);animation:fade .35s cubic-bezier(.2,1,.4,1)}
+.overlay.show{display:flex}
+.overlay .qcard{width:min(1120px,100%);max-height:100%;overflow:auto;padding:clamp(20px,3vw,40px);border-radius:26px;text-align:center;
+  background:linear-gradient(180deg,rgba(15,36,66,.94),rgba(5,15,30,.97));border:1px solid rgba(125,211,252,.4);
+  box-shadow:0 40px 110px rgba(0,0,0,.85);animation:pop .4s cubic-bezier(.2,1.2,.4,1)}
+.qmeta{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.qcat{font-size:11.5px;letter-spacing:.2em;font-weight:800;text-transform:uppercase;color:#bae6fd;
+  padding:6px 14px;border-radius:999px;border:1px solid rgba(56,189,248,.5);background:rgba(30,64,175,.35)}
+.qprice{font-size:15px;font-weight:900;color:var(--gold);padding:6px 18px;border-radius:999px;
+  border:1px solid rgba(251,191,36,.55);background:rgba(251,191,36,.12);font-variant-numeric:tabular-nums;
+  text-shadow:0 0 14px rgba(251,191,36,.4)}
+.overlay .qtext{font-size:clamp(22px,3.1vw,44px);font-weight:800;line-height:1.32;color:#e8f0f7;text-shadow:0 4px 22px rgba(0,0,0,.8)}
+.abox{margin-top:24px;padding:16px 20px;border-radius:16px;border:1px dashed rgba(125,211,252,.4);
+  background:rgba(125,211,252,.06);transition:all .4s cubic-bezier(.2,1,.4,1)}
+.abox .alabel{font-size:10.5px;letter-spacing:.22em;font-weight:800;color:rgba(125,211,252,.75);margin-bottom:8px}
+.abox .atext{font-size:clamp(17px,2.2vw,30px);font-weight:800;line-height:1.3;color:#bae6fd}
+.abox.revealed{border-style:solid;border-color:rgba(74,222,128,.6);background:rgba(74,222,128,.1)}
+.abox.revealed .atext{color:#d9f99d}
+.abox.revealed .alabel{color:rgba(217,249,157,.85)}
+.buzzline{margin-top:20px;min-height:44px;display:flex;align-items:center;justify-content:center;gap:9px;
+  font-size:clamp(15px,1.6vw,20px);font-weight:700;color:rgba(232,240,247,.55);transition:.3s}
+.buzzline.hit{color:#fff;animation:hit .6s cubic-bezier(.2,1.4,.4,1);text-shadow:0 0 26px rgba(125,211,252,.8)}
+.buzzline.hit b{color:var(--ice-blue)}
+.wait-dot{width:8px;height:8px;border-radius:50%;background:var(--ice-blue);box-shadow:0 0 12px rgba(125,211,252,.9);animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:26px;padding-top:22px;border-top:1px solid rgba(125,211,252,.15)}
+.chip{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;border-radius:13px;
+  background:rgba(125,211,252,.06);border:1px solid rgba(125,211,252,.15);border-left:3px solid var(--pc,#888);
+  transition:all .35s cubic-bezier(.2,1,.4,1)}
+.chip.answerer{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);box-shadow:0 0 20px rgba(74,222,128,.2)}
+.chip-name{font-size:13px;font-weight:700;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip-score{color:var(--gold);font-weight:900;font-size:15px;min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
+.chip-input{width:72px;padding:6px 8px;border-radius:8px;background:rgba(0,0,0,.35);border:1px solid rgba(125,211,252,.3);
+  color:#bae6fd;font-family:inherit;font-weight:700;font-size:13px;text-align:center;outline:none;transition:.3s}
+.chip-input:focus{border-color:var(--ice-blue);box-shadow:0 0 12px rgba(125,211,252,.35)}
+.chip-btn{width:30px;height:30px;border-radius:9px;cursor:pointer;border:1px solid rgba(125,211,252,.4);color:var(--ink);
+  font-size:17px;font-weight:900;line-height:1;font-family:inherit;background:linear-gradient(180deg,#155e75,#082f49);transition:all .3s}
+.chip-btn:hover{border-color:var(--ice-blue);color:#fff;transform:scale(1.08)}
+.chip-btn.plus:hover{background:#15803d;border-color:#4ade80;color:#dcfce7}
+.chip-btn:not(.plus):hover{background:#991b1b;border-color:#f87171;color:#fecaca}
+.qbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+
+.final-overlay{position:fixed;inset:0;z-index:65;display:none;align-items:center;justify-content:center;padding:22px;
+  background:radial-gradient(circle at 50% 40%,rgba(60,20,10,.94),rgba(3,8,18,.98) 72%);
+  backdrop-filter:blur(14px);animation:fade .35s cubic-bezier(.2,1,.4,1)}
+.final-overlay.show{display:flex}
+.final-card{width:min(1200px,100%);max-height:100%;overflow:auto;padding:clamp(24px,3vw,44px);border-radius:26px;text-align:center;
+  background:linear-gradient(180deg,rgba(45,25,10,.94),rgba(15,8,3,.97));border:2px solid rgba(251,191,36,.5);
+  box-shadow:0 40px 110px rgba(0,0,0,.85),0 0 80px rgba(251,191,36,.2);animation:pop .5s cubic-bezier(.2,1.2,.4,1)}
+.final-header{font-size:clamp(32px,5vw,72px);font-weight:900;letter-spacing:.2em;color:var(--gold);
+  text-shadow:0 0 60px rgba(251,191,36,.7),0 0 100px rgba(251,191,36,.4);margin-bottom:14px}
+.final-turn{font-size:clamp(14px,1.6vw,20px);color:rgba(232,240,247,.7);letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-bottom:26px}
+.final-turn b{color:var(--gold);font-size:1.15em;text-shadow:0 0 20px rgba(251,191,36,.6)}
+.final-topics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+@media (max-width:800px){.final-topics{grid-template-columns:repeat(2,1fr)}}
+.topic-chip{padding:clamp(14px,2vw,24px) clamp(12px,1.5vw,20px);border-radius:14px;
+  background:linear-gradient(180deg,rgba(14,116,144,.5),rgba(8,47,73,.7));border:1px solid rgba(125,211,252,.4);
+  color:#e0f2fe;font-family:inherit;font-weight:800;font-size:clamp(13px,1.3vw,17px);cursor:pointer;
+  transition:all .35s cubic-bezier(.2,1,.4,1);text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.topic-chip:hover{border-color:#fbbf24;color:#fbbf24;transform:translateY(-3px) scale(1.03);
+  box-shadow:0 0 30px rgba(251,191,36,.5),inset 0 1px 0 rgba(255,255,255,.15);
+  background:linear-gradient(180deg,rgba(251,191,36,.2),rgba(180,83,9,.4))}
+.topic-chip.eliminated{opacity:.25;cursor:default;text-decoration:line-through;transform:none;pointer-events:none}
+.final-hint{font-size:clamp(12px,1vw,14px);color:rgba(232,240,247,.45);letter-spacing:.08em;margin-top:14px}
+.final-remain{font-size:clamp(22px,3vw,44px);color:var(--gold);font-weight:900;margin:20px 0;
+  text-shadow:0 0 40px rgba(251,191,36,.6)}
+.final-q{margin:24px 0;padding:clamp(20px,2.5vw,36px);border-radius:18px;
+  background:rgba(125,211,252,.06);border:1px solid rgba(125,211,252,.3);
+  font-size:clamp(20px,2.6vw,38px);font-weight:800;line-height:1.32;color:#f5faff}
+.final-a{margin-top:18px;padding:clamp(16px,2vw,26px);border-radius:16px;
+  background:rgba(74,222,128,.15);border:2px solid rgba(74,222,128,.6);
+  font-size:clamp(18px,2.2vw,34px);font-weight:900;color:#dcfce7;
+  animation:pop .4s cubic-bezier(.2,1.2,.4,1)}
+.final-a::before{content:'✔ ОТВЕТ';display:block;font-size:11px;letter-spacing:.28em;font-weight:800;
+  color:rgba(217,249,157,.85);margin-bottom:8px}
+.bets{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:22px 0;padding:18px;
+  border-radius:16px;background:rgba(251,191,36,.06);border:1px dashed rgba(251,191,36,.4)}
+.bet-item{padding:10px 18px;border-radius:12px;background:rgba(0,0,0,.4);
+  border:1px solid var(--pc,#888);display:flex;align-items:center;gap:10px}
+.bet-name{font-size:13px;font-weight:800;color:var(--pc,#fff)}
+.bet-amount{font-size:20px;font-weight:900;color:var(--gold)}
+.bet-amount.waiting{color:rgba(232,240,247,.35);font-size:14px}
+</style>
+
+<!-- ============================================================ -->
+<!-- PLAYER CSS                                                    -->
+<!-- ============================================================ -->
+<style id="playerStyles" media="not all">
+#playerApp .xmas-tree{font-size:220px}
+#playerApp .crescent{font-size:110px}
+#playerApp .sm1{font-size:100px}
+#playerApp .sm2{left:55%;font-size:80px}
+
+.join{min-height:100vh;display:grid;place-items:center;padding:24px;position:relative;z-index:1}
+.join[hidden]{display:none !important}
+.join-card{width:min(560px,100%);text-align:center;padding:clamp(26px,4vw,46px);border-radius:26px;
+  background:rgba(12,26,48,.7);backdrop-filter:blur(20px);border:1px solid rgba(125,211,252,.35);
+  box-shadow:0 40px 110px rgba(0,0,0,.75);animation:pop .5s cubic-bezier(.2,1.2,.4,1)}
+.join-leaf{font-size:56px;margin-bottom:6px;animation:bob 3s ease-in-out infinite}
+.join-logo{font-size:clamp(24px,5vw,44px);font-weight:900;letter-spacing:.14em;
+  background:linear-gradient(180deg,#fff,#7dd3fc 45%,#0284c7);-webkit-background-clip:text;background-clip:text;color:transparent}
+.join-sub{margin:14px 0 30px;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.slots{display:grid;gap:14px}
+.slot{font-family:inherit;font-size:17px;font-weight:800;letter-spacing:.06em;padding:18px;border-radius:16px;cursor:pointer;
+  color:#e8f0f7;background:linear-gradient(180deg,rgba(125,211,252,.1),rgba(125,211,252,.03));
+  border:1px solid rgba(125,211,252,.25);border-left:4px solid var(--pc);
+  transition:all .35s cubic-bezier(.2,1,.4,1)}
+.slot:hover{transform:translateY(-2px);color:var(--pc);border-color:var(--pc);
+  box-shadow:0 12px 34px color-mix(in srgb,var(--pc) 40%,transparent)}
+.join-note{margin-top:24px;font-size:11.5px;line-height:1.6;color:rgba(232,240,247,.4)}
+.join-note b{color:rgba(125,211,252,.85)}
+
+.game{min-height:100vh;display:flex;flex-direction:column;max-width:820px;margin:0 auto;padding:16px 16px 22px;gap:14px;position:relative;z-index:1}
+.game[hidden]{display:none !important}
+.phead{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:18px;
+  background:rgba(12,26,48,.7);backdrop-filter:blur(18px);border:1px solid rgba(125,211,252,.22);
+  border-left:4px solid var(--pc,#888);box-shadow:0 12px 34px rgba(0,0,0,.5);transition:.4s}
+.phead .pav{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;font-weight:900;font-size:17px;
+  color:#0a1220;background:var(--pc,#888);box-shadow:0 0 26px color-mix(in srgb,var(--pc) 60%,transparent)}
+.pwho{display:flex;flex-direction:column}
+.pwho .pname-wrapper{display:flex;align-items:center;gap:8px}
+.pwho .pname{font-size:16px;font-weight:800;color:#fff}
+.edit-btn{background:none;border:none;cursor:pointer;font-size:14px;opacity:0.6;transition:.2s}
+.edit-btn:hover{opacity:1;transform:scale(1.1)}
+.pwho .ptag{font-size:10px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;font-weight:700;margin-top:2px}
+.phead .pscore{margin-left:auto;font-size:30px;font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums;
+  text-shadow:0 0 26px rgba(251,191,36,.5)}
+.phead .pscore.neg{color:#fca5a5}
+.pmain{flex:1;display:flex;flex-direction:column;gap:14px}
+.pmain[hidden]{display:none !important}
+#qCard{border-radius:22px;padding:clamp(20px,4vw,36px);text-align:center;
+  background:rgba(12,26,48,.7);backdrop-filter:blur(18px);border:1px solid rgba(125,211,252,.22);
+  box-shadow:0 24px 60px rgba(0,0,0,.6);min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  animation:pop .4s cubic-bezier(.2,1.2,.4,1);transition:all .4s}
+#qCard.idle{opacity:.78}
+.idle-ico{font-size:52px;opacity:.85;animation:bob 3s ease-in-out infinite}
+.idle-txt{font-size:15px;color:var(--dim)}
+.qmeta{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.qmeta .qcat{color:#bae6fd;padding:5px 13px;border-radius:999px;border:1px solid rgba(56,189,248,.5);background:rgba(30,64,175,.35)}
+.qmeta .qprice{color:var(--gold);padding:5px 15px;border-radius:999px;border:1px solid rgba(251,191,36,.55);background:rgba(251,191,36,.12)}
+.qmeta .qround{color:#67e8f9;padding:5px 13px;border-radius:999px;border:1px solid rgba(103,232,249,.5);background:rgba(6,182,212,.15)}
+#qCard .qtext{font-size:clamp(19px,4.6vw,32px);font-weight:800;line-height:1.32;color:#e8f0f7;text-shadow:0 4px 22px rgba(0,0,0,.75)}
+#qCard .atext{margin-top:6px;padding:14px 18px;border-radius:14px;font-size:clamp(16px,3.4vw,26px);font-weight:900;line-height:1.3;
+  color:#dcfce7;background:rgba(74,222,128,.14);border:1px solid rgba(74,222,128,.55);
+  box-shadow:0 0 40px rgba(74,222,128,.18);animation:pop .35s cubic-bezier(.2,1.2,.4,1)}
+.buzz{font-family:inherit;width:100%;padding:24px 18px;border-radius:22px;font-size:clamp(20px,5vw,30px);font-weight:900;
+  letter-spacing:.08em;border:none;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;
+  transition:all .3s cubic-bezier(.2,1,.4,1)}
+.buzz.ready{background:radial-gradient(circle at 50% 0%,#fff,#7dd3fc 42%,#0284c7);color:#062033;
+  animation:playerBuzzPulse 1.6s ease-in-out infinite}
+@keyframes playerBuzzPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 5px rgba(125,211,252,.15),0 18px 50px rgba(56,189,248,.45)}
+  50%{transform:scale(1.025);box-shadow:0 0 0 12px rgba(125,211,252,.06),0 22px 64px rgba(56,189,248,.6)}}
+.buzz.ready:active{transform:scale(.97)}
+.buzz.won{background:linear-gradient(180deg,#dcfce7,#4ade80 55%,#15803d);color:#052e16;
+  box-shadow:0 20px 64px rgba(74,222,128,.5);animation:wonPulse 1s ease-in-out infinite}
+@keyframes wonPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+.buzz.taken{background:rgba(125,211,252,.06);color:rgba(232,240,247,.55);border:1px solid rgba(125,211,252,.18);cursor:default}
+.buzz.disabled{background:rgba(125,211,252,.03);color:rgba(232,240,247,.28);border:1px solid rgba(125,211,252,.08);cursor:default}
+
+#finalPlayer{padding:0}
+#finalPlayer[hidden]{display:none !important}
+.fp-header{text-align:center;padding:22px;border-radius:20px;
+  background:linear-gradient(180deg,rgba(45,25,10,.85),rgba(15,8,3,.95));
+  border:2px solid rgba(251,191,36,.5);box-shadow:0 0 60px rgba(251,191,36,.2);margin-bottom:14px;
+  animation:pop .5s cubic-bezier(.2,1.2,.4,1)}
+.fp-title{font-size:clamp(24px,5vw,42px);font-weight:900;letter-spacing:.2em;color:var(--gold);
+  text-shadow:0 0 50px rgba(251,191,36,.7)}
+.fp-sub{margin-top:8px;font-size:clamp(11px,2.2vw,14px);letter-spacing:.18em;text-transform:uppercase;color:rgba(232,240,247,.6);font-weight:700}
+.fp-sub b{color:var(--gold)}
+.fp-topics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.fp-topic{padding:12px 14px;border-radius:12px;background:rgba(14,116,144,.35);border:1px solid rgba(125,211,252,.35);
+  color:#e0f2fe;font-family:inherit;font-weight:800;font-size:clamp(12px,2.4vw,15px);text-align:center;
+  transition:all .4s cubic-bezier(.2,1,.4,1)}
+.fp-topic.eliminated{opacity:.25;text-decoration:line-through;background:rgba(50,50,60,.35);border-color:rgba(80,80,90,.3)}
+.fp-topic.final{background:linear-gradient(180deg,rgba(251,191,36,.4),rgba(180,83,9,.5));border-color:var(--gold);color:#fff;
+  box-shadow:0 0 30px rgba(251,191,36,.5);animation:wonPulse 1.5s ease-in-out infinite}
+.fp-q{padding:20px;border-radius:16px;background:rgba(125,211,252,.08);border:1px solid rgba(125,211,252,.35);
+  font-size:clamp(16px,3.6vw,24px);font-weight:800;line-height:1.32;color:#f5faff;text-align:center;margin-bottom:14px;
+  animation:pop .4s cubic-bezier(.2,1.2,.4,1)}
+.fp-a{padding:18px;border-radius:16px;background:rgba(74,222,128,.15);border:2px solid rgba(74,222,128,.6);
+  font-size:clamp(15px,3vw,22px);font-weight:900;color:#dcfce7;text-align:center;margin-bottom:14px;
+  animation:pop .4s cubic-bezier(.2,1.2,.4,1)}
+.fp-bet{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:16px;
+  background:linear-gradient(180deg,rgba(251,191,36,.15),rgba(180,83,9,.2));border:2px solid rgba(251,191,36,.4);
+  animation:pop .4s cubic-bezier(.2,1.2,.4,1)}
+.fp-bet-label{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(251,191,36,.85);font-weight:800;text-align:center}
+.fp-bet-row{display:flex;gap:8px}
+.fp-bet-input{flex:1;padding:14px 16px;border-radius:12px;background:rgba(0,0,0,.4);
+  border:2px solid rgba(251,191,36,.4);color:var(--gold);font-family:inherit;font-weight:900;font-size:22px;
+  text-align:center;outline:none;transition:.3s}
+.fp-bet-input:focus{border-color:var(--gold);box-shadow:0 0 22px rgba(251,191,36,.4)}
+.fp-bet-btn{padding:14px 24px;border-radius:12px;border:none;cursor:pointer;font-family:inherit;font-weight:900;font-size:15px;
+  letter-spacing:.05em;color:#2a1408;background:linear-gradient(180deg,#fde68a,#fbbf24 50%,#b45309);
+  box-shadow:0 8px 26px rgba(251,191,36,.5);transition:all .3s cubic-bezier(.2,1,.4,1)}
+.fp-bet-btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(251,191,36,.7)}
+.fp-bet-btn:active{transform:translateY(0)}
+.fp-bet-status{text-align:center;font-size:14px;color:#dcfce7;font-weight:700}
+.fp-bet-status b{color:var(--gold);font-size:18px}
+.fp-waiting{text-align:center;padding:16px;font-size:13px;color:rgba(232,240,247,.55);letter-spacing:.06em}
+
+.pscore-board{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:800px;margin:0 auto;width:100%}
+.sb-item{padding:10px 12px;border-radius:14px;background:rgba(12,26,48,.65);backdrop-filter:blur(14px);
+  border:1px solid rgba(125,211,252,.12);border-bottom:3px solid var(--pc,#888);
+  display:flex;flex-direction:column;gap:3px;opacity:.68;transition:.4s;
+  flex:1 1 100px; max-width:140px; text-align:center;}
+.sb-item.me{opacity:1;background:rgba(15,36,66,.85);box-shadow:0 0 22px color-mix(in srgb,var(--pc) 30%,transparent)}
+.sb-name{font-size:10.5px;color:var(--dim);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-score{font-size:19px;font-weight:900;color:var(--pc,#fff);font-variant-numeric:tabular-nums}
+.sb-item.me .sb-name{color:#fff}
+</style>
+
+<!-- ============================================================ -->
+<!-- SPECTATOR CSS                                                 -->
+<!-- ============================================================ -->
+<style id="spectatorStyles" media="not all">
+#spectatorApp .xmas-tree{font-size:300px;bottom:-20px}
+#spectatorApp .crescent{top:6%;left:5%;font-size:150px}
+#spectatorApp .sm1{font-size:120px}
+#spectatorApp .sm2{left:50%;font-size:90px}
+
+.spectator-topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:14px 24px;background:linear-gradient(180deg,rgba(5,13,26,.94),rgba(5,13,26,.6));
+  backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,211,252,.2);box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.spectator-topbar .logo{font-size:clamp(20px,2.2vw,32px);font-weight:900;letter-spacing:.18em;
+  background:linear-gradient(180deg,#fff,#7dd3fc 45%,#0284c7);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 26px rgba(125,211,252,.6))}
+.spectator-topbar .logo::after{content:' ❄️';-webkit-text-fill-color:initial;color:#7dd3fc;filter:drop-shadow(0 0 14px rgba(125,211,252,.8))}
+.spectator-topbar .role{font-size:clamp(10px,1vw,12px);letter-spacing:.28em;font-weight:800;padding:6px 14px;border-radius:999px;
+  color:var(--ice-blue);border:1px solid rgba(125,211,252,.45);background:rgba(125,211,252,.1)}
+.round-tag{font-size:clamp(11px,1vw,14px);letter-spacing:.2em;font-weight:800;padding:6px 14px;border-radius:999px;
+  color:var(--gold);border:1px solid rgba(251,191,36,.5);background:rgba(251,191,36,.12);
+  text-shadow:0 0 14px rgba(251,191,36,.4);transition:all .4s}
+.spacer{flex:1 1 auto}
+.live{display:flex;align-items:center;gap:9px;font-size:clamp(11px,1vw,13px);color:var(--dim);letter-spacing:.1em;
+  font-weight:700;text-transform:uppercase}
+.live .dot{width:10px;height:10px;border-radius:50%;background:#3a4a5f;transition:.4s}
+.live.on .dot{background:#4ade80;animation:specPing 1.6s infinite}
+.live.on{color:#4ade80}
+@keyframes specPing{0%{box-shadow:0 0 0 0 rgba(74,222,128,.65)}70%{box-shadow:0 0 0 12px rgba(74,222,128,0)}100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}
+
+.scores{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(10px, 1.2vw, 18px);max-width:1700px;
+  margin:clamp(18px,2.4vh,32px) auto 0;padding:0 clamp(20px,3vw,40px);position:relative;z-index:1}
+.pscore-card{padding:clamp(16px,2vw,28px) clamp(18px,2.2vw,30px);border-radius:clamp(18px,2vw,26px);
+  background:linear-gradient(180deg,rgba(15,36,66,.78),rgba(6,14,26,.85));backdrop-filter:blur(18px);
+  border:1px solid rgba(125,211,252,.2);border-bottom:4px solid var(--pc);
+  display:flex;align-items:center;gap:clamp(14px,1.4vw,22px);
+  box-shadow:0 20px 50px rgba(0,0,0,.55);transition:all .5s cubic-bezier(.2,1,.4,1);
+  flex:1 1 clamp(220px, 22vw, 320px); max-width: 400px;}
+.pscore-card.buzzflash{animation:buzzflash 1s ease}
+@keyframes buzzflash{
+  0%{box-shadow:0 20px 50px rgba(0,0,0,.55),0 0 0 0 rgba(251,191,36,.9)}
+  40%{box-shadow:0 20px 50px rgba(0,0,0,.55),0 0 0 22px rgba(251,191,36,0)}
+  100%{box-shadow:0 20px 50px rgba(0,0,0,.55),0 0 0 0 rgba(251,191,36,0)}}
+.pscore-card.answering{background:linear-gradient(180deg,rgba(251,191,36,.2),rgba(180,83,9,.25));border-color:#fbbf24;
+  box-shadow:0 20px 60px rgba(251,191,36,.35),0 0 0 2px rgba(251,191,36,.45);transform:translateY(-3px)}
+.spectator-topbar .pav,
+.pscore-card .pav{width:clamp(40px,4vw,60px);height:clamp(40px,4vw,60px);border-radius:clamp(12px,1.2vw,16px);flex-shrink:0;
+  display:grid;place-items:center;font-size:clamp(18px,2vw,28px);font-weight:900;color:#06101f;background:var(--pc);
+  box-shadow:0 0 34px color-mix(in srgb,var(--pc) 70%,transparent)}
+.pscore-card .pmain{flex:1;min-width:0}
+.pscore-card .pname{font-size:clamp(14px,1.4vw,20px);font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pscore-card .ptag{font-size:clamp(9px,.8vw,11px);letter-spacing:.24em;font-weight:800;text-transform:uppercase;color:var(--dim);margin-top:4px}
+.pscore-card.answering .ptag{color:#fbbf24}
+.pscore-card .pscore{font-size:clamp(26px,3vw,48px);font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums;
+  text-shadow:0 0 30px rgba(251,191,36,.5);letter-spacing:-.02em}
+.pscore-card .pscore.neg{color:#fca5a5}
+
+.stage{max-width:1400px;margin:clamp(20px,3vh,40px) auto 0;padding:0 clamp(20px,3vw,40px);
+  position:relative;z-index:1;display:none;flex-direction:column;align-items:center;justify-content:flex-start}
+.stage.show{display:flex;animation:pop .4s ease}
+.status-pill{display:inline-flex;align-items:center;gap:12px;padding:clamp(8px,1vh,12px) clamp(16px,2vw,26px);border-radius:999px;
+  font-size:clamp(11px,1vw,14px);font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--ice-blue);
+  background:rgba(125,211,252,.1);border:1px solid rgba(125,211,252,.35);margin-bottom:clamp(14px,2vh,26px);
+  box-shadow:0 0 30px rgba(125,211,252,.2);transition:.4s}
+.status-pill .dot{width:9px;height:9px;border-radius:50%;background:var(--ice-blue);box-shadow:0 0 12px rgba(125,211,252,.9);
+  animation:blink 1.2s infinite}
+.status-pill.hot{color:#fbbf24;background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.5);box-shadow:0 0 40px rgba(251,191,36,.3)}
+.status-pill.hot .dot{background:#fbbf24;box-shadow:0 0 12px rgba(251,191,36,.9)}
+
+.stage .qcard{width:100%;text-align:center;padding:clamp(28px,4vw,60px) clamp(26px,4vw,64px);border-radius:clamp(22px,2.2vw,32px);
+  background:linear-gradient(180deg,rgba(15,36,66,.82),rgba(6,14,26,.9));backdrop-filter:blur(22px);
+  border:1px solid rgba(125,211,252,.28);box-shadow:0 40px 100px rgba(0,0,0,.65);
+  animation:pop .5s cubic-bezier(.2,1.2,.4,1);position:relative}
+.stage .qtext{font-size:clamp(24px,3.4vw,54px);font-weight:800;line-height:1.28;color:#f5faff;text-shadow:0 6px 30px rgba(0,0,0,.85)}
+.stage .atext{margin-top:clamp(18px,2.4vh,32px);padding:clamp(16px,2vh,24px) clamp(20px,2.4vw,36px);border-radius:clamp(14px,1.4vw,20px);
+  font-size:clamp(22px,2.8vw,42px);font-weight:900;line-height:1.3;color:#dcfce7;background:rgba(74,222,128,.15);
+  border:2px solid rgba(74,222,128,.6);box-shadow:0 0 60px rgba(74,222,128,.25);animation:pop .35s ease}
+.stage .atext::before{content:'✔ ОТВЕТ';display:block;font-size:clamp(10px,.9vw,12px);letter-spacing:.28em;font-weight:800;
+  color:rgba(217,249,157,.85);margin-bottom:8px}
+.buzzbar{display:flex;align-items:center;gap:14px;margin-top:clamp(16px,2vh,26px);padding:clamp(12px,1.4vh,18px) clamp(20px,2.4vw,34px);
+  border-radius:999px;font-size:clamp(16px,1.8vw,26px);font-weight:900;color:#fff;
+  background:linear-gradient(135deg,rgba(251,191,36,.25),rgba(180,83,9,.3));
+  border:2px solid rgba(251,191,36,.7);box-shadow:0 0 40px rgba(251,191,36,.35);animation:hit .7s cubic-bezier(.2,1.4,.4,1)}
+.buzzbar b{color:#fbbf24;text-shadow:0 0 18px rgba(251,191,36,.7)}
+
+.board-wrap{max-width:1700px;margin:clamp(20px,3vh,36px) auto 0;padding:0 clamp(20px,3vw,40px);position:relative;z-index:1}
+.board-title{font-size:clamp(10px,.9vw,12px);letter-spacing:.24em;font-weight:800;color:rgba(125,211,252,.7);
+  text-transform:uppercase;margin-bottom:clamp(8px,1vh,12px);text-align:center}
+#board{display:grid;grid-template-columns:200px repeat(5, 1fr);gap:clamp(6px,.8vw,12px);transition:opacity .5s}
+.bcat{display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;border-radius:12px;
+  background:linear-gradient(180deg,#1a5c3a,#0f3d24);border:1px solid rgba(125,211,252,.4);
+  font-size:clamp(11px,1vw,14px);font-weight:800;letter-spacing:.04em;text-transform:uppercase;line-height:1.15;color:#d4f1e0;
+  text-shadow:0 2px 8px rgba(0,0,0,.6);box-shadow:0 6px 16px rgba(0,0,0,.4);height:64px}
+.bcell{display:grid;place-items:center;border-radius:12px;border:1px solid rgba(125,211,252,.3);
+  background:linear-gradient(180deg,#0e7490,#083344);color:#e0f2fe;font-weight:900;font-size:clamp(16px,1.6vw,24px);
+  text-shadow:0 2px 8px rgba(0,0,0,.7);box-shadow:0 6px 16px rgba(0,0,0,.4);height:64px;
+  transition:all .5s cubic-bezier(.2,1,.4,1);font-variant-numeric:tabular-nums}
+.bcell.answered{background:rgba(15,30,55,.55);color:rgba(224,242,254,.18);border-color:rgba(125,211,252,.06);box-shadow:none}
+.bcell.active{background:linear-gradient(180deg,#fbbf24,#b45309);color:#1a0e08;border-color:#fde68a;
+  box-shadow:0 0 30px rgba(251,191,36,.7),0 0 0 3px rgba(251,191,36,.35);
+  animation:cellPulse 1.5s ease-in-out infinite;text-shadow:none}
+@keyframes cellPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+.final-wrap{max-width:1400px;margin:clamp(20px,3vh,36px) auto 0;padding:0 clamp(20px,3vw,40px);
+  position:relative;z-index:1;display:none}
+.final-wrap.show{display:block;animation:pop .5s cubic-bezier(.2,1.2,.4,1)}
+.final-head{text-align:center;margin-bottom:clamp(14px,2vh,24px)}
+.final-title{font-size:clamp(32px,5vw,64px);font-weight:900;letter-spacing:.2em;color:var(--gold);
+  text-shadow:0 0 60px rgba(251,191,36,.7),0 0 100px rgba(251,191,36,.4)}
+.final-turn{font-size:clamp(13px,1.4vw,18px);color:rgba(232,240,247,.7);letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-top:10px}
+.final-turn b{color:var(--gold);font-size:1.15em;text-shadow:0 0 20px rgba(251,191,36,.6)}
+.final-topics{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,1vw,14px);margin-bottom:clamp(14px,2vh,22px)}
+@media (max-width:800px){.final-topics{grid-template-columns:repeat(2,1fr)}}
+.f-topic{padding:clamp(12px,1.5vw,20px) clamp(10px,1.2vw,16px);border-radius:14px;
+  background:linear-gradient(180deg,rgba(14,116,144,.5),rgba(8,47,73,.7));border:1px solid rgba(125,211,252,.4);
+  color:#e0f2fe;font-weight:800;font-size:clamp(12px,1.2vw,16px);text-align:center;
+  transition:all .5s cubic-bezier(.2,1,.4,1)}
+.f-topic.eliminated{opacity:.22;text-decoration:line-through}
+.f-topic.isFinal{background:linear-gradient(180deg,rgba(251,191,36,.5),rgba(180,83,9,.6));border-color:var(--gold);color:#fff;
+  box-shadow:0 0 40px rgba(251,191,36,.6);animation:cellPulse 1.5s ease-in-out infinite;transform:scale(1.05)}
+.f-question{margin:clamp(16px,2vh,24px) 0;padding:clamp(20px,3vw,40px);border-radius:20px;
+  background:linear-gradient(180deg,rgba(15,36,66,.85),rgba(6,14,26,.9));border:1px solid rgba(125,211,252,.35);
+  font-size:clamp(20px,2.6vw,42px);font-weight:800;line-height:1.32;color:#f5faff;text-align:center;
+  box-shadow:0 24px 60px rgba(0,0,0,.6);animation:pop .4s ease}
+.f-answer{margin-top:clamp(14px,2vh,20px);padding:clamp(16px,2vh,26px);border-radius:18px;
+  background:rgba(74,222,128,.15);border:2px solid rgba(74,222,128,.6);
+  font-size:clamp(18px,2.2vw,34px);font-weight:900;color:#dcfce7;text-align:center;
+  animation:pop .4s ease}
+.f-answer::before{content:'✔ ОТВЕТ';display:block;font-size:clamp(10px,.9vw,12px);letter-spacing:.28em;font-weight:800;
+  color:rgba(217,249,157,.85);margin-bottom:10px}
+.f-bets{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:clamp(14px,2vh,22px);padding:18px;
+  border-radius:16px;background:rgba(251,191,36,.08);border:1px dashed rgba(251,191,36,.4)}
+.f-bet-item{padding:clamp(10px,1.2vw,14px) clamp(16px,1.8vw,22px);border-radius:12px;background:rgba(0,0,0,.4);
+  border:2px solid var(--pc,#888);display:flex;align-items:center;gap:12px;
+  box-shadow:0 0 20px color-mix(in srgb,var(--pc) 30%,transparent)}
+.f-bet-name{font-size:clamp(12px,1.1vw,15px);font-weight:800;color:var(--pc,#fff)}
+.f-bet-amount{font-size:clamp(18px,2vw,26px);font-weight:900;color:var(--gold)}
+.f-bet-amount.waiting{color:rgba(232,240,247,.35);font-size:clamp(11px,1vw,13px)}
+
+.pre-title{font-size:clamp(50px,10vw,140px);font-weight:900;letter-spacing:.2em;
+  background:linear-gradient(180deg,#fff,#7dd3fc 45%,#0284c7);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 60px rgba(125,211,252,.6));margin-bottom:10px}
+.pre-subtitle{font-size:clamp(14px,2vw,24px);color:var(--ice-blue);letter-spacing:.5em;text-transform:uppercase;
+  font-weight:700;text-shadow:0 0 20px rgba(125,211,252,.8);margin-top:-10px;margin-bottom:20px}
+.pre-author{font-size:clamp(16px,2.5vw,28px);color:var(--gold);letter-spacing:.3em;font-weight:800;
+  text-transform:uppercase;text-shadow:0 0 30px rgba(251,191,36,.5);margin-bottom:30px}
+.pre-author b{color:#fff}
+.pre-ico{font-size:clamp(60px,8vw,120px);margin-bottom:10px;animation:bob 3s ease-in-out infinite}
+.qr-container{display:flex;flex-direction:column;align-items:center;gap:12px;
+  margin-top:20px;animation:pop .6s cubic-bezier(.2,1.2,.4,1)}
+.qr-container img, .qr-container canvas { border-radius:12px; display:block; }
+.qr-box {background:#fff; padding:14px; border-radius:16px;
+  box-shadow:0 0 40px rgba(255,255,255,.2), 0 10px 30px rgba(0,0,0,.5);}
+.qr-label {font-size:14px; color:var(--dim); letter-spacing:.1em; text-transform:uppercase; font-weight:700;}
+.qr-dev {font-size: 13px; color: rgba(255, 150, 150, 0.8); font-weight: 600; margin-top: -6px; letter-spacing: 0.05em;}
+
+.winner-card{text-align:center;animation:pop .8s cubic-bezier(.2,1.2,.4,1)}
+.winner-title{font-size:clamp(32px,6vw,80px);font-weight:900;letter-spacing:.2em;color:var(--gold);
+  text-shadow:0 0 60px rgba(251,191,36,.8),0 0 100px rgba(251,191,36,.4);margin-bottom:20px}
+.winner-name{font-size:clamp(40px,8vw,110px);font-weight:900;color:#fff;
+  text-shadow:0 0 40px rgba(255,255,255,.6);margin-bottom:10px}
+.winner-score{font-size:clamp(24px,4vw,56px);font-weight:900;color:var(--ice-blue);
+  text-shadow:0 0 30px rgba(125,211,252,.5)}
+@keyframes confettiFall { to { transform: translateY(110vh) rotate(720deg); } }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- ROLE SELECTOR                                                 -->
+<!-- ============================================================ -->
+<div id="roleSelector">
+  <div class="bg">
+    <div class="bg-blobs"></div>
+    <div class="crescent">🌙</div>
+    <div class="xmas-tree">🎄</div>
+    <div class="snowman sm1">⛄</div>
+    <div class="snowman sm2">⛄</div>
+    <div class="snow-layer"></div>
+  </div>
+  <div class="rs-card">
+    <div class="rs-title">СВОЯК</div>
+    <div class="rs-sub">winter edition</div>
+    <div class="rs-options">
+      <button class="rs-btn" data-role="host">
+        <span class="rs-ico">🎙️</span>
+        <span class="rs-name">Ведущий</span>
+        <span class="rs-desc">Управление игрой</span>
+      </button>
+      <button class="rs-btn" data-role="spectator">
+        <span class="rs-ico">👀</span>
+        <span class="rs-name">Зритель</span>
+        <span class="rs-desc">Просмотр на экране</span>
+      </button>
+      <button class="rs-btn" data-role="player">
+        <span class="rs-ico">🎮</span>
+        <span class="rs-name">Игрок</span>
+        <span class="rs-desc">Играть с телефона</span>
+      </button>
+    </div>
+    <div class="rs-hint">
+      Откройте нужные вкладки/устройства.<br>
+      Ведущий управляет игрой, зрители смотрят, игроки нажимают.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- HOST APP                                                      -->
+<!-- ============================================================ -->
+<div id="hostApp" class="role-app" hidden>
+  <div class="bg">
+    <div class="bg-blobs"></div>
+    <div class="crescent">🌙</div>
+    <div class="xmas-tree">🎄<span class="tree-star">⭐</span></div>
+    <div class="snowman sm1">⛄</div>
+    <div class="snowman sm2">⛄</div>
+    <div class="snow-layer"></div>
+  </div>
+  <div class="garland" id="garland"><div class="garland-wire"></div></div>
+
+  <div class="overlay-full" id="introScreen">
+    <div class="intro-title">ТЕМЫ ВЫПУСКА</div>
+    <div class="intro-list" id="introList"></div>
+  </div>
+  <div class="round-banner" id="roundBanner">
+    <div>
+      <div class="rb-title" id="rbTitle">РАУНД 1</div>
+      <div class="rb-sub" id="rbSub">Базовая стоимость</div>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <span class="logo">СВОЯК</span>
+    <span class="role">ВЕДУЩИЙ</span>
+    <div class="round-btns">
+      <button class="round-btn" data-round="1">Раунд 1</button>
+      <button class="round-btn active" data-round="2">Раунд 2 ×2</button>
+      <button class="round-btn" data-round="3">Раунд 3 ×3</button>
+      <button class="round-btn final" data-round="final">🏆 Финал</button>
+    </div>
+    <div class="player-count">
+      <span>Игроков:</span>
+      <select id="playerCountSelect">
+        <option value="2">2</option>
+        <option value="3" selected>3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+      </select>
+    </div>
+    <div class="conn" id="conn"><span class="dot"></span><span id="connText">0 / 3</span></div>
+    <div class="spacer"></div>
+    <button class="btn btn-play" id="startBtn">НАЧАТЬ ИГРУ</button>
+    <button class="btn" id="resetBtn">Новая игра</button>
+  </header>
+
+  <div class="layout">
+    <main class="board-scroll"><div id="board"></div></main>
+    <aside class="panel">
+      <div class="panel-title">❄️ Игроки</div>
+      <div id="players"></div>
+      <div class="panel-hint">
+        Раунды: 1 — база, 2 — ×2, 3 — ×3. Финал — общий вопрос со ставками.
+      </div>
+    </aside>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="qcard">
+      <div class="qmeta">
+        <span class="qcat" id="qCat">Категория</span>
+        <span class="qprice" id="qPrice">100</span>
+      </div>
+      <div class="qtext" id="qText">Вопрос</div>
+      <div class="abox" id="abox">
+        <div class="alabel" id="aLabel">ОТВЕТ (виден только вам)</div>
+        <div class="atext" id="aText">Ответ</div>
+      </div>
+      <div class="buzzline" id="buzzLine"></div>
+      <div class="chips" id="chips"></div>
+      <div class="qbtns">
+        <button class="btn primary" id="revealBtn">Показать ответ участникам</button>
+        <button class="btn" id="nextBtn" hidden>Следующий вопрос →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="final-overlay" id="finalOverlay"><div class="final-card" id="finalCard"></div></div>
+
+  <footer class="site-footer">
+    <div><span class="leaf-icon">❄️</span> © СВОЯК · Автор: <b>Ravenhlv</b> <span class="leaf-icon">❄️</span></div>
+    <div>📧 <a href="mailto:Ravenhlv@yandex.ru">Ravenhlv@yandex.ru</a></div>
+    <a class="role-switch-link" href="#" data-role-switch>← Сменить роль</a>
+  </footer>
+</div>
+
+<!-- ============================================================ -->
+<!-- PLAYER APP                                                    -->
+<!-- ============================================================ -->
+<div id="playerApp" class="role-app" hidden>
+  <div class="bg">
+    <div class="bg-blobs"></div>
+    <div class="crescent">🌙</div>
+    <div class="xmas-tree">🎄</div>
+    <div class="snowman sm1">⛄</div>
+    <div class="snowman sm2">⛄</div>
+    <div class="snow-layer"></div>
+  </div>
+
+  <div class="join" id="joinScreen">
+    <div class="join-card">
+      <div class="join-leaf">❄️</div>
+      <div class="join-logo">СВОЯК</div>
+      <div class="join-sub">Кто вы за столом?</div>
+      <div class="slots" id="slots"></div>
+      <div class="join-note">Откройте в нужном количестве вкладок.<br>Пульт ведущего — <b>#host</b>.</div>
+    </div>
+  </div>
+
+  <div class="game" id="gameScreen" hidden>
+    <header class="phead" id="phead">
+      <div class="pav" id="myAvatar">1</div>
+      <div class="pwho">
+        <div class="pname-wrapper">
+          <span class="pname" id="myName">Игрок 1</span>
+          <button class="edit-btn" id="editNameBtn" title="Сменить имя">✏️</button>
+        </div>
+        <span class="ptag" id="myRoundTag">Участник · Раунд 1</span>
+      </div>
+      <div class="pscore" id="myScore">0</div>
+    </header>
+    <main class="pmain" id="normalMain">
+      <div id="qCard" class="idle">
+        <div class="idle-ico">❄️</div>
+        <div class="idle-txt">Ожидаем ведущего…</div>
+      </div>
+      <button class="buzz disabled" id="buzzBtn" disabled>ЖДЁМ ВОПРОСА</button>
+    </main>
+    <main class="pmain" id="finalPlayer" hidden></main>
+    <footer class="pscore-board" id="scoreboard"></footer>
+  </div>
+
+  <footer class="site-footer">
+    <div><span class="leaf-icon">❄️</span> © СВОЯК · Автор: <b>Ravenhlv</b> <span class="leaf-icon">❄️</span></div>
+    <div>📧 <a href="mailto:Ravenhlv@yandex.ru">Ravenhlv@yandex.ru</a></div>
+    <a class="role-switch-link" href="#" data-role-switch>← Сменить роль</a>
+  </footer>
+</div>
+
+<!-- ============================================================ -->
+<!-- SPECTATOR APP                                                 -->
+<!-- ============================================================ -->
+<div id="spectatorApp" class="role-app" hidden>
+  <div class="bg">
+    <div class="bg-blobs"></div>
+    <div class="crescent">🌙</div>
+    <div class="xmas-tree">🎄</div>
+    <div class="snowman sm1">⛄</div>
+    <div class="snowman sm2">⛄</div>
+    <div class="snow-layer"></div>
+  </div>
+  <div class="garland" id="garland"><div class="garland-wire"></div></div>
+
+  <div class="overlay-full show" id="preGameScreen">
+    <div class="pre-ico">❄️</div>
+    <div class="pre-title">СВОЯК</div>
+    <div class="pre-subtitle">winter edition</div>
+    <div class="pre-author">Автор: <b>Ravenhlv</b></div>
+    <div class="qr-container">
+      <div class="qr-box" id="qrcode"></div>
+      <div class="qr-label">Отсканируйте, чтобы играть</div>
+    </div>
+  </div>
+
+  <div class="overlay-full" id="introScreen">
+    <div class="intro-title">ТЕМЫ ВЫПУСКА</div>
+    <div class="intro-list" id="introList"></div>
+  </div>
+
+  <div class="round-banner" id="roundBanner">
+    <div>
+      <div class="rb-title" id="rbTitle">РАУНД 1</div>
+      <div class="rb-sub" id="rbSub">Базовая стоимость</div>
+    </div>
+  </div>
+
+  <div class="overlay-full" id="winnerScreen">
+    <div class="winner-card">
+      <div class="winner-title">ПОБЕДИТЕЛЬ</div>
+      <div class="winner-name" id="winnerName">Игрок 1</div>
+      <div class="winner-score" id="winnerScore">1000 очков</div>
+    </div>
+  </div>
+
+  <div id="mainContent" style="opacity:0;pointer-events:none;transition:opacity .5s">
+    <header class="spectator-topbar">
+      <span class="logo">СВОЯК</span>
+      <span class="role">ЗРИТЕЛИ</span>
+      <span class="round-tag" id="roundTag">Раунд 1</span>
+      <div class="spacer"></div>
+      <div class="live" id="live"><span class="dot"></span><span id="liveText">СИНХРОНИЗАЦИЯ…</span></div>
+    </header>
+    <section class="scores" id="scores"></section>
+    <section class="stage" id="stageWrap">
+      <div class="status-pill" id="statusPill"><span class="dot"></span><span id="statusText">ОЖИДАНИЕ</span></div>
+      <div class="qcard" id="qCard"></div>
+    </section>
+    <section class="board-wrap" id="boardWrap">
+      <div class="board-title">Игровое поле</div>
+      <div id="board"></div>
+    </section>
+    <section class="final-wrap" id="finalWrap">
+      <div class="final-head">
+        <div class="final-title">ФИНАЛ</div>
+        <div class="final-turn" id="finalTurn"></div>
+      </div>
+      <div class="final-topics" id="finalTopics"></div>
+      <div id="finalQuestionWrap"></div>
+      <div id="finalAnswerWrap"></div>
+      <div id="finalBetsWrap"></div>
+    </section>
+    <footer class="site-footer">
+      <div><span class="leaf-icon">❄️</span> © СВОЯК · Автор: <b>Ravenhlv</b> <span class="leaf-icon">❄️</span></div>
+      <div>📧 <a href="mailto:Ravenhlv@yandex.ru">Ravenhlv@yandex.ru</a></div>
+      <a class="role-switch-link" href="#" data-role-switch>← Сменить роль</a>
+    </footer>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MAIN SCRIPT                                                   -->
+<!-- ============================================================ -->
+<script>
+(function(){
+  'use strict';
+
+  // ========= FIREBASE INIT =========
+  const firebaseConfig = {
+    apiKey: "AIzaSyClxf-WGhr8L6WpE0cSWyfmdhDrqQVncxM",
+    authDomain: "ravenhlv.firebaseapp.com",
+    databaseURL: "https://ravenhlv-default-rtdb.firebaseio.com",
+    projectId: "ravenhlv",
+    storageBucket: "ravenhlv.firebasestorage.app",
+    messagingSenderId: "286270802599",
+    appId: "1:286270802599:web:f27f912e8a1a70babaa982",
+    measurementId: "G-75KPDM3MVL"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // ========= COMMON =========
+  const PCOLORS = ['#7dd3fc', '#dc2626', '#fbbf24', '#4ade80', '#c084fc', '#f97316', '#e11d48', '#14b8a6'];
+  const ICONS = ['❄️', '🎄', '⛄', '⭐', '🎁', '🔔', '🦌', '🍬'];
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, c =>
+      ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+
+  function makeGarland(container){
+    if (!container) return;
+    container.querySelectorAll('.light').forEach(n => n.remove());
+    const colors = ['#ef4444','#22c55e','#eab308','#3b82f6','#a855f7','#ec4899','#f97316'];
+    for (let i = 0; i < 28; i++){
+      const l = document.createElement('span');
+      l.className = 'light';
+      l.style.left = (2 + i * 3.5) + '%';
+      const c = colors[i % colors.length];
+      l.style.background = c;
+      l.style.boxShadow = '0 0 16px ' + c + ', 0 0 32px ' + c;
+      l.style.animationDelay = (i * 0.12) + 's';
+      container.appendChild(l);
+    }
+  }
+
+  // ============================================================
+  // HOST MODULE
+  // ============================================================
+  const hostModule = (function(){
+    const ROOT = document.getElementById('hostApp');
+    const $ = id => ROOT.querySelector('#' + id);
+
+    const DATA = {
+      1: [
+        { name:"История России", questions:[
+          { price:100, q:"В каком году произошло Крещение Руси?", a:"988 год" },
+          { price:200, q:"Кто был первым царём всея Руси?", a:"Иван IV Грозный" },
+          { price:300, q:"В каком году отменили крепостное право?", a:"В 1861 году" },
+          { price:400, q:"Какой город был столицей до Санкт-Петербурга?", a:"Москва" },
+          { price:500, q:"Кто командовал армией в Бородинском сражении?", a:"М. И. Кутузов" }
+        ]},
+        { name:"География", questions:[
+          { price:100, q:"Самый большой океан на Земле?", a:"Тихий океан" },
+          { price:200, q:"Назовите столицу Австралии.", a:"Канберра" },
+          { price:300, q:"Самое глубокое озеро мира?", a:"Байкал" },
+          { price:400, q:"На каком материке пустыня Сахара?", a:"В Африке" },
+          { price:500, q:"Какой пролив разделяет Евразию и Северную Америку?", a:"Берингов пролив" }
+        ]},
+        { name:"Наука", questions:[
+          { price:100, q:"Химический символ золота?", a:"Au (аурум)" },
+          { price:200, q:"Сколько планет в Солнечной системе?", a:"Восемь" },
+          { price:300, q:"Кто открыл закон всемирного тяготения?", a:"Исаак Ньютон" },
+          { price:400, q:"Какой газ преобладает в атмосфере Земли?", a:"Азот (~78%)" },
+          { price:500, q:"Чему равно число Авогадро?", a:"6,02 × 10²³ моль⁻¹" }
+        ]},
+        { name:"Литература", questions:[
+          { price:100, q:"Кто написал «Войну и мир»?", a:"Л. Н. Толстой" },
+          { price:200, q:"Автор романа «Мастер и Маргарита»?", a:"М. А. Булгаков" },
+          { price:300, q:"Настоящая фамилия Максима Горького?", a:"Пешков" },
+          { price:400, q:"«Все счастливые семьи похожи друг на друга…» — откуда?", a:"«Анна Каренина» Л. Н. Толстого" },
+          { price:500, q:"Кто написал «Тихий Дон»?", a:"М. А. Шолохов" }
+        ]},
+        { name:"Кино", questions:[
+          { price:100, q:"Кто сыграл Джека в «Титанике»?", a:"Леонардо ДиКаприо" },
+          { price:200, q:"Режиссёр «Интерстеллара»?", a:"Кристофер Нолан" },
+          { price:300, q:"Сколько полнометражных фильмов о Гарри Поттере?", a:"Восемь" },
+          { price:400, q:"Какой советский фильм получил «Оскар» в 1969?", a:"«Война и мир» С. Бондарчука" },
+          { price:500, q:"«Оскар» за лучший фильм 2020 года (за 2019)?", a:"«Паразиты» (Пон Джун Хо)" }
+        ]},
+        { name:"Спорт", questions:[
+          { price:100, q:"Сколько игроков одной команды на поле в футболе?", a:"Одиннадцать" },
+          { price:200, q:"Город зимних Олимпийских игр 2014?", a:"Сочи" },
+          { price:300, q:"Прозвище боксёра «Величайший»?", a:"Мохаммед Али" },
+          { price:400, q:"Сколько раз Бразилия выигрывала ЧМ по футболу (на 2022)?", a:"Пять раз" },
+          { price:500, q:"Сколько сетов нужно выиграть в мужском финале Большого шлема?", a:"Три (из пяти)" }
+        ]}
+      ],
+      2: [
+        { name:"История России", questions:[
+          { price:200, q:"В каком году произошла Полтавская битва?", a:"1709 год" },
+          { price:400, q:"Кто был последним императором Российской империи?", a:"Николай II" },
+          { price:600, q:"В каком году Россия продала Аляску США?", a:"1867 год" },
+          { price:800, q:"Какой князь получил прозвище «Мудрый»?", a:"Ярослав Мудрый" },
+          { price:1000, q:"В каком году состоялся первый полёт человека в космос?", a:"1961 год" }
+        ]},
+        { name:"География", questions:[
+          { price:200, q:"Столица Канады?", a:"Оттава" },
+          { price:400, q:"Самая длинная река в мире?", a:"Амазонка (или Нил)" },
+          { price:600, q:"Какой материк самый маленький?", a:"Австралия" },
+          { price:800, q:"В какой стране находится вулкан Этна?", a:"Италия" },
+          { price:1000, q:"Какой океан омывает Антарктиду?", a:"Южный океан" }
+        ]},
+        { name:"Наука", questions:[
+          { price:200, q:"Какой химический элемент обозначается символом W?", a:"Вольфрам" },
+          { price:400, q:"Кто открыл радиоактивность?", a:"Анри Беккерель" },
+          { price:600, q:"Сколько костей в теле взрослого человека?", a:"206" },
+          { price:800, q:"Какой закон гласит: «Сила действия равна силе противодействия»?", a:"Третий закон Ньютона" },
+          { price:1000, q:"Как называется ближайшая к Солнцу звезда?", a:"Проксима Центавра" }
+        ]},
+        { name:"Литература", questions:[
+          { price:200, q:"Кто написал «Собачье сердце»?", a:"Михаил Булгаков" },
+          { price:400, q:"Кто автор романа «1984»?", a:"Джордж Оруэлл" },
+          { price:600, q:"Сколько лет прожил на необитаемом острове Робинзон Крузо?", a:"28 лет" },
+          { price:800, q:"Кто написал «Горе от ума»?", a:"А. С. Грибоедов" },
+          { price:1000, q:"Как звали главного героя романа «Преступление и наказание»?", a:"Родион Раскольников" }
+        ]},
+        { name:"Кино", questions:[
+          { price:200, q:"Кто снял «Крёстного отца»?", a:"Фрэнсис Форд Коппола" },
+          { price:400, q:"Какой фильм получил первый «Оскар» за лучший фильм?", a:"«Крылья» (1927)" },
+          { price:600, q:"Кто сыграл Железного человека?", a:"Роберт Дауни-младший" },
+          { price:800, q:"Режиссёр фильма «Побег из Шоушенка»?", a:"Фрэнк Дарабонт" },
+          { price:1000, q:"Какой фильм собрал больше всего в прокате (на 2023)?", a:"«Аватар»" }
+        ]},
+        { name:"Спорт", questions:[
+          { price:200, q:"В каком году прошли первые современные Олимпийские игры?", a:"1896" },
+          { price:400, q:"Сколько игроков в команде по регби на поле?", a:"15" },
+          { price:600, q:"Какой теннисист выиграл больше всего турниров Большого шлема?", a:"Рафаэль Надаль" },
+          { price:800, q:"Какой клуб выиграл больше всего Лиг чемпионов УЕФА?", a:"Реал Мадрид" },
+          { price:1000, q:"В каком году прошёл первый чемпионат мира по футболу?", a:"1930" }
+        ]}
+      ],
+      3: [
+        { name:"История России", questions:[
+          { price:300, q:"В каком году произошла Куликовская битва?", a:"1380 год" },
+          { price:600, q:"Кто был первым русским патриархом?", a:"Иов" },
+          { price:900, q:"В каком году был основан Санкт-Петербург?", a:"1703 год" },
+          { price:1200, q:"Какой царь отменил крепостное право?", a:"Александр II" },
+          { price:1500, q:"В каком году состоялось Ледовое побоище?", a:"1242 год" }
+        ]},
+        { name:"География", questions:[
+          { price:300, q:"Самая высокая гора в мире?", a:"Эверест (Джомолунгма)" },
+          { price:600, q:"В какой стране находится город Петра?", a:"Иордания" },
+          { price:900, q:"Какой пролив разделяет Африку и Европу?", a:"Гибралтарский" },
+          { price:1200, q:"Какой остров самый большой в мире?", a:"Гренландия" },
+          { price:1500, q:"Столица Новой Зеландии?", a:"Веллингтон" }
+        ]},
+        { name:"Наука", questions:[
+          { price:300, q:"Кто сформулировал закон сохранения энергии?", a:"Майер, Джоуль, Гельмгольц" },
+          { price:600, q:"Какой газ вызывает парниковый эффект?", a:"Углекислый газ (CO2)" },
+          { price:900, q:"Кто открыл периодический закон?", a:"Д. И. Менделеев" },
+          { price:1200, q:"Что такое число Пи?", a:"3,14159..." },
+          { price:1500, q:"Какой химический элемент самый распространённый во Вселенной?", a:"Водород" }
+        ]},
+        { name:"Литература", questions:[
+          { price:300, q:"Кто написал «Мастера и Маргариту»?", a:"М. А. Булгаков" },
+          { price:600, q:"Кто автор «Дон Кихота»?", a:"Мигель де Сервантес" },
+          { price:900, q:"Кто написал «Отцы и дети»?", a:"И. С. Тургенев" },
+          { price:1200, q:"Сколько томов в романе «Война и мир»?", a:"4 тома" },
+          { price:1500, q:"Кто написал «Божественную комедию»?", a:"Данте Алигьери" }
+        ]},
+        { name:"Кино", questions:[
+          { price:300, q:"Кто снял фильм «Начало»?", a:"Кристофер Нолан" },
+          { price:600, q:"Какой фильм стал первым цветным? (полнометражный)", a:"«Всё для тебя» (1918)" },
+          { price:900, q:"Кто сыграл Гэндальфа в «Властелине колец»?", a:"Иэн МакКеллен" },
+          { price:1200, q:"Режиссёр «Криминального чтива»?", a:"Квентин Тарантино" },
+          { price:1500, q:"Какой фильм получил «Оскар» за лучший фильм в 2021 году?", a:"«Земля кочевников»" }
+        ]},
+        { name:"Спорт", questions:[
+          { price:300, q:"Сколько игроков в баскетбольной команде на площадке?", a:"5" },
+          { price:600, q:"Какой боксёр провёл «Бой века» с Джо Фрейзером?", a:"Мохаммед Али" },
+          { price:900, q:"В каком виде спорта используется шайба?", a:"Хоккей" },
+          { price:1200, q:"Сколько раз сборная СССР выигрывала Олимпиаду по хоккею?", a:"7 раз" },
+          { price:1500, q:"Какой теннисист выиграл «Золотой шлем» (все 4 турнира за год)?", a:"Роджер Федерер" }
+        ]}
+      ]
+    };
+
+    const FINAL_TOPICS = [
+      { name:"Космос", q:"Какая планета Солнечной системы самая горячая?", a:"Венера" },
+      { name:"Животные", q:"Какое животное самое быстрое на Земле?", a:"Гепард" },
+      { name:"Столицы", q:"Столица Канады?", a:"Оттава" },
+      { name:"Кино 90-х", q:"Кто снял «Криминальное чтиво» (1994)?", a:"Квентин Тарантино" },
+      { name:"Мифология", q:"Кто в греческой мифологии был богом войны?", a:"Арес" },
+      { name:"Русский язык", q:"Сколько падежей в современном русском языке?", a:"Шесть" },
+      { name:"Изобретения", q:"Кто изобрёл телефон?", a:"Александр Белл" },
+      { name:"Спорт", q:"В каком виде спорта используется шайба?", a:"Хоккей" }
+    ];
+
+    const state = {
+      phase: 'pre',
+      round: 1,
+      players: [
+        { id:1, name:"Игрок 1", score:0 },
+        { id:2, name:"Игрок 2", score:0 },
+        { id:3, name:"Игрок 3", score:0 }
+      ],
+      answered: { 1:new Set(), 2:new Set(), 3:new Set() },
+      current: null,
+      stage: "idle",
+      buzz: null,
+      final: null
+    };
+    const seen = new Map();
+
+    function getRoundData(){
+      if (state.round === 'final') return DATA[1];
+      return DATA[state.round] || DATA[1];
+    }
+
+    function roundComplete(r){
+      if (r === 'final') return false;
+      const total = DATA[r].reduce((s,c) => s + c.questions.length, 0);
+      return (state.answered[r]?.size || 0) >= total;
+    }
+
+    function snapshot(){
+      const q = state.current
+        ? getRoundData()[state.current.ci].questions[state.current.qi] : null;
+      return {
+        phase: state.phase,
+        round: state.round,
+        players: state.players.map(p => ({ id:p.id, name:p.name, score:p.score })),
+        answered: state.round === 'final' ? [] : [...(state.answered[state.round] || [])],
+        board: getRoundData().map((c) => ({
+          name: c.name,
+          prices: c.questions.map((q) => q.price)
+        })),
+        current: q ? {
+          ci: state.current.ci,
+          qi: state.current.qi,
+          cat: getRoundData()[state.current.ci].name,
+          price: q.price,
+          q: q.q, a: q.a
+        } : null,
+        stage: state.stage,
+        buzz: state.buzz,
+        final: state.round === 'final' && state.final ? {
+          topics: state.final.topics.map((t, i) => ({
+            name: t.name,
+            eliminated: state.final.eliminated.includes(i),
+            isFinal: state.final.finalTopicIdx === i
+          })),
+          stage: state.final.stage,
+          turnPlayerId: state.players[state.final.turn % state.players.length]?.id,
+          turnPlayerName: state.players[state.final.turn % state.players.length]?.name,
+          bets: { ...state.final.bets },
+          question: state.final.finalTopicIdx !== null ? {
+            name: state.final.topics[state.final.finalTopicIdx].name,
+            q: state.final.topics[state.final.finalTopicIdx].q,
+            a: state.final.topics[state.final.finalTopicIdx].a
+          } : null
+        } : null
+      };
+    }
+
+    function publish(){
+      db.ref('gameState').set({ snap: snapshot(), t: Date.now() });
+    }
+
+    function handleSignal(msg){
+      if (msg.type === 'hello'){
+        if (msg.playerId) seen.set(msg.playerId, Date.now());
+        renderConn();
+        publish();
+      }
+      if (msg.type === 'changeName'){
+        const p = state.players.find(x => x.id === msg.playerId);
+        if (p) { p.name = msg.name; renderPlayers(); publish(); }
+      }
+      if (msg.type === 'buzz'){
+        if (state.phase !== 'play' || state.round === 'final' || state.stage !== 'question' || state.buzz) return;
+        const p = state.players.find(x => x.id === msg.playerId);
+        if (!p) return;
+        state.buzz = { id: p.id, name: p.name };
+        renderOverlay();
+        publish();
+      }
+      if (msg.type === 'bet'){
+        if (state.round !== 'final' || !state.final) return;
+        if (state.final.stage !== 'question') return;
+        const amount = parseInt(msg.amount, 10);
+        if (!isFinite(amount) || amount <= 0) return;
+        state.final.bets[msg.playerId] = amount;
+        renderFinalOverlay();
+        publish();
+      }
+    }
+
+    const boardEl = $('board');
+    function renderBoard(){
+      const roundData = getRoundData();
+      const rows = Math.max(...roundData.map(c => c.questions.length));
+      boardEl.style.gridTemplateColumns = `200px repeat(${rows}, 1fr)`;
+      boardEl.innerHTML = '';
+      boardEl.style.opacity = state.round === 'final' ? '0.15' : '1';
+
+      roundData.forEach((cat, ci) => {
+        const d = document.createElement('div');
+        d.className = 'cat';
+        d.textContent = cat.name;
+        boardEl.appendChild(d);
+        for (let qi = 0; qi < rows; qi++) {
+          const q = cat.questions[qi];
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'cell';
+          if (!q){
+            b.style.visibility = 'hidden';
+            b.disabled = true;
+          } else {
+            b.textContent = q.price;
+            if (state.round !== 'final' && state.answered[state.round].has(ci + '-' + qi)) b.classList.add('done');
+            if (state.round !== 'final') b.addEventListener('click', () => openQuestion(ci, qi));
+            else b.disabled = true;
+          }
+          boardEl.appendChild(b);
+        }
+      });
+    }
+
+    const playersEl = $('players');
+    function renderPlayers(){
+      playersEl.innerHTML = '';
+      state.players.forEach((p, index) => {
+        const card = document.createElement('div');
+        card.className = 'pcard';
+        card.style.setProperty('--pc', PCOLORS[index] || '#888');
+        card.innerHTML = `
+          <div class="pav">${p.id}</div>
+          <div class="pmain">
+            <input class="pname" data-id="${p.id}" value="${esc(p.name)}" maxlength="18">
+            <div class="pstate" data-state="${p.id}">не подключён</div>
+          </div>
+          <div class="pscore ${p.score < 0 ? 'neg' : ''}">${p.score}</div>`;
+        playersEl.appendChild(card);
+      });
+      renderConn();
+    }
+
+    function renderConn(){
+      let n = 0;
+      state.players.forEach(p => {
+        const el = playersEl.querySelector(`.pstate[data-state="${p.id}"]`);
+        const live = seen.has(p.id) && Date.now() - seen.get(p.id) < 15000;
+        if (live) n++;
+        if (el){ el.textContent = live ? 'в игре' : 'не подключён'; el.classList.toggle('live', live); }
+      });
+      $('conn').classList.toggle('on', n > 0);
+      $('connText').textContent = `${n} / ${state.players.length}`;
+    }
+
+    function renderRoundButtons(){
+      ROOT.querySelectorAll('.round-btn').forEach(b => {
+        const r = b.dataset.round;
+        b.classList.toggle('active', String(state.round) === r);
+        b.classList.remove('pulse');
+      });
+      if (state.round === 'final') return;
+      const next = state.round === 1 ? 2 : state.round === 2 ? 3 : 'final';
+      const nextBtn = ROOT.querySelector(`.round-btn[data-round="${next}"]`);
+      if (nextBtn && roundComplete(state.round)) nextBtn.classList.add('pulse');
+    }
+
+    function showRoundBanner(r){
+      const banner = $('roundBanner');
+      const title = $('rbTitle');
+      const sub = $('rbSub');
+      if (r === 'final'){ title.textContent = 'ФИНАЛ'; sub.textContent = 'Общий вопрос · ставки'; }
+      else { title.textContent = 'РАУНД ' + r; sub.textContent = r === 1 ? 'Базовая стоимость' : 'Очки × ' + r; }
+      banner.classList.add('show');
+      setTimeout(() => banner.classList.remove('show'), 2500);
+    }
+
+    function switchRound(r){
+      if (state.round === r) return;
+      if (r === 'final'){ startFinal(); return; }
+      state.current = null;
+      state.stage = 'idle';
+      state.buzz = null;
+      state.round = r;
+      state.final = null;
+      $('overlay').classList.remove('show');
+      $('finalOverlay').classList.remove('show');
+      renderBoard();
+      renderRoundButtons();
+      showRoundBanner(r);
+      publish();
+    }
+
+    function openQuestion(ci, qi){
+      if (state.phase !== 'play') return;
+      state.current = { ci, qi };
+      state.answered[state.round].add(ci + '-' + qi);
+      state.stage = 'question';
+      state.buzz = null;
+      renderBoard();
+      renderRoundButtons();
+      renderOverlay();
+      publish();
+    }
+
+    function closeQuestion(){
+      state.current = null;
+      state.stage = 'idle';
+      state.buzz = null;
+      $('overlay').classList.remove('show');
+      renderBoard();
+      renderRoundButtons();
+      publish();
+    }
+
+    function renderOverlay(){
+      const overlay = $('overlay');
+      if (!state.current){ overlay.classList.remove('show'); return; }
+      const roundData = getRoundData();
+      const cat = roundData[state.current.ci];
+      const q = cat.questions[state.current.qi];
+      const isAnswer = state.stage === 'answer';
+      overlay.classList.add('show');
+      $('qCat').textContent = cat.name;
+      $('qPrice').textContent = q.price;
+      $('qText').textContent = q.q;
+      $('aText').textContent = q.a;
+      const abox = $('abox');
+      abox.classList.toggle('revealed', isAnswer);
+      $('aLabel').textContent = isAnswer ? 'ОТВЕТ — ОТКРЫТ УЧАСТНИКАМ' : 'ОТВЕТ (виден только вам)';
+      $('revealBtn').hidden = isAnswer;
+      $('nextBtn').hidden = !isAnswer;
+      const bl = $('buzzLine');
+      if (state.buzz){
+        bl.className = 'buzzline hit';
+        bl.innerHTML = `⚡ Первым нажал: <b>${esc(state.buzz.name)}</b>`;
+      } else if (state.stage === 'question'){
+        bl.className = 'buzzline';
+        bl.innerHTML = `<span class="wait-dot"></span> Ждём нажатия…`;
+      } else { bl.className = 'buzzline'; bl.innerHTML = ''; }
+      renderChips(q.price);
+    }
+
+    function renderChips(price){
+      if (price === undefined && state.current){
+        const q = getRoundData()[state.current.ci].questions[state.current.qi];
+        price = q.price;
+      }
+      const el = $('chips');
+      el.innerHTML = '';
+      if (!state.current) return;
+      const p = price;
+      const answererId = state.buzz ? state.buzz.id : null;
+      state.players.forEach((pl, idx) => {
+        const c = document.createElement('div');
+        c.className = 'chip' + (pl.id === answererId ? ' answerer' : '');
+        c.style.setProperty('--pc', PCOLORS[idx] || '#888');
+        c.innerHTML = `
+          <span class="chip-name">${esc(pl.name)}${pl.id === answererId ? ' 🎯' : ''}</span>
+          <span class="chip-score">${pl.score}</span>
+          <input class="chip-input" type="number" value="${p}" min="0" step="10">
+          <button class="chip-btn" data-id="${pl.id}" data-d="-1">−</button>
+          <button class="chip-btn plus" data-id="${pl.id}" data-d="1">+</button>`;
+        el.appendChild(c);
+      });
+    }
+
+    function startFinal(){
+      if (!confirm('Начать финал? Перейдём к общему вопросу со ставками.')) return;
+      state.phase = 'final';
+      state.round = 'final';
+      state.current = null;
+      state.stage = 'idle';
+      state.buzz = null;
+      state.final = {
+        topics: FINAL_TOPICS.map(t => ({ ...t })),
+        eliminated: [],
+        turn: 0,
+        stage: 'elimination',
+        bets: {},
+        finalTopicIdx: null
+      };
+      $('overlay').classList.remove('show');
+      renderBoard();
+      renderRoundButtons();
+      showRoundBanner('final');
+      renderFinalOverlay();
+      publish();
+    }
+
+    function eliminateTopic(i){
+      if (!state.final || state.final.stage !== 'elimination') return;
+      if (state.final.eliminated.includes(i)) return;
+      state.final.eliminated.push(i);
+      state.final.turn++;
+      const remaining = state.final.topics.length - state.final.eliminated.length;
+      if (remaining === 1){
+        state.final.finalTopicIdx = state.final.topics.findIndex((t, idx) => !state.final.eliminated.includes(idx));
+        state.final.stage = 'question';
+      }
+      renderFinalOverlay();
+      publish();
+    }
+
+    function renderFinalOverlay(){
+      const f = state.final;
+      const overlayEl = $('finalOverlay');
+      if (!f){ overlayEl.classList.remove('show'); return; }
+      const card = $('finalCard');
+      overlayEl.classList.add('show');
+
+      if (f.stage === 'elimination'){
+        const turnName = state.players[f.turn % state.players.length]?.name || 'Игрок';
+        let html = `<div class="final-header">ФИНАЛ</div>`;
+        html += `<div class="final-turn">Ход: <b>${esc(turnName)}</b></div>`;
+        html += `<div class="final-topics">`;
+        f.topics.forEach((t, i) => {
+          const elim = f.eliminated.includes(i);
+          html += `<button class="topic-chip ${elim ? 'eliminated' : ''}" data-topic="${i}" ${elim ? 'disabled' : ''}>${esc(t.name)}</button>`;
+        });
+        html += `</div>`;
+        html += `<div class="final-hint">Нажмите на тему, чтобы убрать её · останется 1</div>`;
+        card.innerHTML = html;
+        card.querySelectorAll('.topic-chip:not(.eliminated)').forEach(chip => {
+          chip.addEventListener('click', () => eliminateTopic(+chip.dataset.topic));
+        });
+      } else {
+        const topic = f.topics[f.finalTopicIdx];
+        let html = `<div class="final-header">ФИНАЛ</div>`;
+        html += `<div class="final-remain">Тема: ${esc(topic.name)}</div>`;
+        html += `<div class="final-q">${esc(topic.q)}</div>`;
+        if (f.stage === 'question'){
+          const betsHtml = state.players.map((p, idx) => {
+            const bet = f.bets[p.id];
+            return `<div class="bet-item" style="--pc:${PCOLORS[idx]}">
+              <span class="bet-name">${esc(p.name)}</span>
+              ${bet !== undefined ? `<span class="bet-amount">${bet}</span>` : `<span class="bet-amount waiting">ждём ставку…</span>`}
+            </div>`;
+          }).join('');
+          html += `<div class="bets">${betsHtml}</div>`;
+          html += `<div class="qbtns"><button class="btn primary" id="finalRevealBtn">Показать ответ</button></div>`;
+          card.innerHTML = html;
+          $('finalRevealBtn').addEventListener('click', () => {
+            state.final.stage = 'answer';
+            renderFinalOverlay();
+            publish();
+          });
+        } else if (f.stage === 'answer'){
+          html += `<div class="final-a">${esc(topic.a)}</div>`;
+          html += `<div class="chips" style="margin-top:26px">`;
+          state.players.forEach((p, idx) => {
+            const bet = f.bets[p.id] || 0;
+            html += `<div class="chip" style="--pc:${PCOLORS[idx]}">
+              <span class="chip-name">${esc(p.name)}</span>
+              <span class="chip-score">${p.score}</span>
+              <input class="chip-input final-input" type="number" value="${bet}" min="0" data-pid="${p.id}">
+              <button class="chip-btn" data-id="${p.id}" data-d="-1">−</button>
+              <button class="chip-btn plus" data-id="${p.id}" data-d="1">+</button>
+            </div>`;
+          });
+          html += `</div>`;
+          html += `<div class="qbtns">
+            <button class="btn primary" id="finalEndBtn" style="background:linear-gradient(180deg,#fca5a5,#ef4444,#b91c1c);border-color:#fecaca;color:#fff;">Завершить игру</button>
+          </div>`;
+          card.innerHTML = html;
+          card.querySelectorAll('.chip-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const pid = +btn.dataset.id;
+              const dir = +btn.dataset.d;
+              const inp = card.querySelector(`.final-input[data-pid="${pid}"]`);
+              const amount = parseFloat(inp.value) || 0;
+              const pl = state.players.find(x => x.id === pid);
+              if (!pl) return;
+              pl.score += dir * amount;
+              renderPlayers();
+              renderFinalOverlay();
+              publish();
+            });
+          });
+          $('finalEndBtn').addEventListener('click', () => {
+            if (!confirm('Завершить игру?')) return;
+            state.phase = 'gameover';
+            $('finalOverlay').classList.remove('show');
+            publish();
+          });
+        }
+      }
+    }
+
+    function setPlayerCount(count){
+      const currentLen = state.players.length;
+      if (count > currentLen){
+        for (let i = currentLen + 1; i <= count; i++){
+          state.players.push({ id: i, name: 'Игрок ' + i, score: 0 });
+        }
+      } else if (count < currentLen){
+        state.players.splice(count);
+      }
+      renderPlayers();
+      publish();
+    }
+
+    function resetGame(){
+      state.phase = 'pre';
+      state.round = 1;
+      state.answered = { 1:new Set(), 2:new Set(), 3:new Set() };
+      state.players.forEach(p => p.score = 0);
+      state.current = null;
+      state.stage = 'idle';
+      state.buzz = null;
+      state.final = null;
+      $('overlay').classList.remove('show');
+      $('finalOverlay').classList.remove('show');
+      $('introScreen').classList.remove('show');
+      $('playerCountSelect').value = "3";
+      setPlayerCount(3);
+      renderBoard();
+      renderPlayers();
+      renderRoundButtons();
+      publish();
+    }
+
+    function startGame(){
+      if (state.phase !== 'pre') return;
+      state.phase = 'intro';
+      publish();
+
+      const introScreen = $('introScreen');
+      const introList = $('introList');
+      introList.innerHTML = '';
+      introScreen.classList.add('show');
+
+      DATA[1].forEach((c, i) => {
+        const div = document.createElement('div');
+        div.className = 'intro-item';
+        div.textContent = c.name;
+        div.style.animationDelay = (i * 1.2) + 's';
+        introList.appendChild(div);
+      });
+
+      setTimeout(() => {
+        introScreen.classList.remove('show');
+        state.phase = 'play';
+        publish();
+        showRoundBanner(1);
+      }, DATA[1].length * 1200 + 1000);
+    }
+
+    function init(){
+      makeGarland($('garland'));
+
+      // Firebase Signal Listener
+      db.ref('signals').on('child_added', (snapshot) => {
+        const msg = snapshot.val();
+        if (msg) handleSignal(msg);
+        snapshot.ref.remove(); // Remove immediately after processing
+      });
+
+      $('playerCountSelect').addEventListener('change', (e) => {
+        setPlayerCount(parseInt(e.target.value, 10));
+      });
+      $('startBtn').addEventListener('click', startGame);
+      $('resetBtn').addEventListener('click', () => {
+        if (!confirm('Начать новую игру? Очки, ответы и раунды сбросятся.')) return;
+        resetGame();
+      });
+      $('revealBtn').addEventListener('click', () => {
+        state.stage = 'answer';
+        renderOverlay();
+        publish();
+      });
+      $('nextBtn').addEventListener('click', closeQuestion);
+      $('chips').addEventListener('click', e => {
+        const btn = e.target.closest('.chip-btn');
+        if (!btn || !state.current) return;
+        const input = btn.closest('.chip').querySelector('.chip-input');
+        const amount = parseFloat(input.value) || 0;
+        const p = state.players.find(x => x.id === +btn.dataset.id);
+        if (!p) return;
+        p.score += (+btn.dataset.d) * amount;
+        renderPlayers();
+        renderChips();
+        publish();
+      });
+      playersEl.addEventListener('input', e => {
+        const inp = e.target.closest('.pname');
+        if (!inp) return;
+        const p = state.players.find(x => x.id === +inp.dataset.id);
+        if (!p) return;
+        p.name = inp.value || ('Игрок ' + p.id);
+        publish();
+        if (state.current) renderChips();
+      });
+      ROOT.querySelectorAll('.round-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          const r = b.dataset.round;
+          if (r === 'final') startFinal();
+          else switchRound(+r);
+        });
+      });
+
+      $('playerCountSelect').value = state.players.length;
+      renderBoard();
+      renderPlayers();
+      renderRoundButtons();
+      publish();
+
+      setInterval(renderConn, 2500);
+    }
+
+    return { init };
+  })();
+
+  // ============================================================
+  // PLAYER MODULE
+  // ============================================================
+  const playerModule = (function(){
+    const ROOT = document.getElementById('playerApp');
+    const $ = id => ROOT.querySelector('#' + id);
+
+    let myId = null, curState = null;
+
+    let actx = null;
+    function beep(freq = 880, dur = 0.13, type = 'sine', vol = 0.14){
+      try{
+        if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = actx.createOscillator(), g = actx.createGain();
+        o.type = type; o.frequency.value = freq;
+        g.gain.setValueAtTime(vol, actx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+        o.connect(g); g.connect(actx.destination);
+        o.start(); o.stop(actx.currentTime + dur);
+      }catch(e){}
+    }
+
+    function sendSignal(type, data){
+      db.ref('signals').push({ type, ...data, t: Date.now() });
+    }
+
+    function applyState(s){
+      if (!s) return;
+      curState = s;
+
+      if (myId) {
+        const meExists = s.players.find(p => p.id === myId);
+        if (!meExists) {
+          alert("Ведущий убрал вас из игры.");
+          myId = null;
+          $('joinScreen').hidden = false;
+          $('gameScreen').hidden = true;
+          renderSlots();
+          return;
+        }
+      }
+
+      if (!myId) renderSlots();
+      render();
+    }
+
+    function renderSlots(){
+      const slots = $('slots');
+      slots.innerHTML = '';
+      const playersList = (curState && curState.players) ? curState.players : [
+        { id:1 }, { id:2 }, { id:3 }
+      ];
+      playersList.forEach((p, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'slot';
+        btn.dataset.id = p.id;
+        btn.style.setProperty('--pc', PCOLORS[i] || '#888');
+        btn.textContent = `${ICONS[i] || '👤'} Игрок ${p.id}`;
+        slots.appendChild(btn);
+      });
+    }
+
+    function render(){
+      if (!myId) return;
+      const s = curState;
+      const me = s ? s.players.find(p => p.id === myId) : null;
+
+      $('myName').textContent = me ? me.name : ('Игрок ' + myId);
+      const sc = $('myScore');
+      sc.textContent = me ? me.score : 0;
+      sc.classList.toggle('neg', !!(me && me.score < 0));
+
+      const roundLabel = !s ? 'Раунд 1' : s.round === 'final' ? 'ФИНАЛ' : 'Раунд ' + s.round + (s.round > 1 ? ' ×' + s.round : '');
+      $('myRoundTag').textContent = 'Участник · ' + roundLabel;
+
+      const isFinal = s && s.round === 'final' && s.final;
+      $('normalMain').hidden = !!isFinal;
+      $('finalPlayer').hidden = !isFinal;
+
+      if (isFinal) renderFinal();
+      else renderNormal();
+      renderScoreboard();
+    }
+
+    function renderNormal(){
+      const s = curState;
+      const qCard = $('qCard');
+      const buzzBtn = $('buzzBtn');
+
+      if (!s || s.phase === 'pre' || s.phase === 'intro') {
+        qCard.className = 'qcard idle';
+        qCard.innerHTML = `<div class="idle-ico">❄️</div><div class="idle-txt">Ожидаем ведущего…</div>`;
+        buzzBtn.disabled = true;
+        buzzBtn.textContent = 'ЖДЁМ ВОПРОСА';
+        buzzBtn.className = 'buzz disabled';
+        return;
+      }
+
+      if (!s.current){
+        qCard.className = 'qcard idle';
+        qCard.innerHTML = `<div class="idle-ico">❄️</div><div class="idle-txt">Выберите вопрос на поле</div>`;
+        buzzBtn.disabled = true;
+        buzzBtn.textContent = 'ЖДЁМ ВОПРОСА';
+        buzzBtn.className = 'buzz disabled';
+        return;
+      }
+
+      const isAnswer = s.stage === 'answer';
+      qCard.className = 'qcard';
+      qCard.innerHTML = `
+        <div class="qmeta">
+          <span class="qround">Раунд ${s.round}</span>
+          <span class="qcat">${esc(s.current.cat)}</span>
+          <span class="qprice">${s.current.price}</span>
+        </div>
+        <div class="qtext">${esc(s.current.q)}</div>
+        ${isAnswer ? `<div class="atext">${esc(s.current.a)}</div>` : ''}`;
+
+      if (s.buzz){
+        if (s.buzz.id === myId){
+          buzzBtn.disabled = true; buzzBtn.className = 'buzz won'; buzzBtn.textContent = 'ТЫ ПЕРВЫЙ! ❄️';
+        } else {
+          buzzBtn.disabled = true; buzzBtn.className = 'buzz taken'; buzzBtn.textContent = 'Первым нажал ' + s.buzz.name;
+        }
+      } else if (s.stage === 'question'){
+        buzzBtn.disabled = false; buzzBtn.className = 'buzz ready'; buzzBtn.textContent = 'ЖМУ!';
+      } else {
+        buzzBtn.disabled = true; buzzBtn.className = 'buzz disabled'; buzzBtn.textContent = 'ОТВЕТ ОТКРЫТ';
+      }
+    }
+
+    function renderFinal(){
+      const f = curState.final;
+      const el = $('finalPlayer');
+      const isMyTurn = f.turnPlayerId === myId;
+
+      if (f.stage === 'elimination'){
+        let html = `<div class="fp-header">
+          <div class="fp-title">ФИНАЛ</div>
+          <div class="fp-sub">${isMyTurn ? '<b>ВАШ ХОД</b>' : 'Ход: <b>' + esc(f.turnPlayerName) + '</b>'}</div>
+        </div>`;
+        html += `<div class="fp-topics">`;
+        f.topics.forEach(t => {
+          let cls = 'fp-topic';
+          if (t.eliminated) cls += ' eliminated';
+          if (t.isFinal) cls += ' final';
+          html += `<div class="${cls}">${esc(t.name)}</div>`;
+        });
+        html += `</div>`;
+        html += `<div class="fp-waiting">Осталось тем: ${f.topics.filter(t => !t.eliminated).length}</div>`;
+        el.innerHTML = html;
+        return;
+      }
+
+      const topic = f.question || { name: '', q: '', a: '' };
+      let html = `<div class="fp-header">
+        <div class="fp-title">ФИНАЛ</div>
+        <div class="fp-sub">Тема: <b>${esc(topic.name)}</b></div>
+      </div>`;
+
+      if (f.stage === 'question'){
+        html += `<div class="fp-q">${esc(topic.q)}</div>`;
+        const myBet = f.bets[myId];
+        if (myBet !== undefined){
+          html += `<div class="fp-bet">
+            <div class="fp-bet-label">Ваша ставка</div>
+            <div class="fp-bet-status"><b>${myBet}</b></div>
+            <div class="fp-bet-row">
+              <input class="fp-bet-input" id="betInput" type="number" min="1" value="${myBet}">
+              <button class="fp-bet-btn" id="betBtn">ИЗМЕНИТЬ</button>
+            </div>
+          </div>`;
+        } else {
+          html += `<div class="fp-bet">
+            <div class="fp-bet-label">Сколько ставите?</div>
+            <div class="fp-bet-row">
+              <input class="fp-bet-input" id="betInput" type="number" min="1" placeholder="500" value="100">
+              <button class="fp-bet-btn" id="betBtn">ПОСТАВИТЬ</button>
+            </div>
+          </div>`;
+        }
+        el.innerHTML = html;
+        const betBtn = ROOT.querySelector('#betBtn');
+        if (betBtn){
+          betBtn.addEventListener('click', () => {
+            const inp = ROOT.querySelector('#betInput');
+            const amount = parseInt(inp.value, 10);
+            if (!isFinite(amount) || amount <= 0) return;
+            sendSignal('bet', { playerId: myId, amount });
+            beep(900, 0.1, 'sine', 0.14);
+            setTimeout(() => beep(1200, 0.1, 'sine', 0.14), 80);
+          });
+        }
+      } else if (f.stage === 'answer'){
+        html += `<div class="fp-q">${esc(topic.q)}</div>`;
+        html += `<div class="fp-a">✔ ${esc(topic.a)}</div>`;
+        const myBet = f.bets[myId];
+        if (myBet !== undefined){
+          html += `<div class="fp-bet" style="background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.5)">
+            <div class="fp-bet-label" style="color:#dcfce7">Ваша ставка: <b style="color:var(--gold)">${myBet}</b></div>
+            <div class="fp-waiting">Ведущий начислит или спишет</div>
+          </div>`;
+        }
+        el.innerHTML = html;
+      }
+    }
+
+    function renderScoreboard(){
+      const el = $('scoreboard');
+      el.innerHTML = '';
+      const players = curState ? curState.players : [];
+      players.forEach((p, idx) => {
+        const d = document.createElement('div');
+        d.className = 'sb-item' + (p.id === myId ? ' me' : '');
+        d.style.setProperty('--pc', PCOLORS[idx] || '#888');
+        d.innerHTML = `<span class="sb-name">${esc(p.name)}</span><span class="sb-score">${p.score}</span>`;
+        el.appendChild(d);
+      });
+    }
+
+    function init(){
+      // Firebase State Listener
+      db.ref('gameState').on('value', (snapshot) => {
+        const val = snapshot.val();
+        if (val && val.snap) applyState(val.snap);
+      });
+
+      // slot click handler
+      $('slots').addEventListener('click', e => {
+        const btn = e.target.closest('.slot');
+        if (!btn) return;
+        myId = +btn.dataset.id;
+        const idx = myId - 1;
+        $('phead').style.setProperty('--pc', PCOLORS[idx] || '#888');
+        $('myAvatar').textContent = myId;
+        $('myAvatar').style.background = PCOLORS[idx] || '#888';
+        $('myAvatar').style.boxShadow = '0 0 26px ' + (PCOLORS[idx] || '#888');
+        $('joinScreen').hidden = true;
+        $('gameScreen').hidden = false;
+        sendSignal('hello', { playerId: myId });
+        if (curState) applyState(curState);
+        beep(660, 0.10, 'sine', 0.12);
+        render();
+      });
+
+      // edit name
+      $('editNameBtn').addEventListener('click', () => {
+        if (!myId) return;
+        const newName = prompt('Введите ваше имя:', $('myName').textContent);
+        if (newName && newName.trim()){
+          sendSignal('changeName', { playerId: myId, name: newName.trim() });
+        }
+      });
+
+      // buzz
+      $('buzzBtn').addEventListener('click', () => {
+        if (!myId || !curState) return;
+        if (curState.round === 'final' || curState.phase !== 'play') return;
+        if (curState.stage !== 'question' || curState.buzz) return;
+        sendSignal('buzz', { playerId: myId });
+        const bb = $('buzzBtn');
+        bb.disabled = true;
+        bb.textContent = 'ОТПРАВЛЕНО…';
+        bb.className = 'buzz taken';
+        beep(1400, 0.09, 'square', 0.16);
+        setTimeout(() => beep(1700, 0.10, 'square', 0.13), 90);
+        if (navigator.vibrate) navigator.vibrate(60);
+      });
+
+      // hello ping
+      setInterval(() => { if (myId) sendSignal('hello', { playerId: myId }); }, 3000);
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && myId){
+          sendSignal('hello', { playerId: myId });
+        }
+      });
+    }
+
+    function refresh(){
+      // not needed with Firebase
+    }
+
+    return { init, refresh };
+  })();
+
+  // ============================================================
+  // SPECTATOR MODULE
+  // ============================================================
+  const spectatorModule = (function(){
+    const ROOT = document.getElementById('spectatorApp');
+    const $ = id => ROOT.querySelector('#' + id);
+
+    let curState = null;
+    let lastBuzzId = null;
+    let prevQuestionKey = null;
+    let lastRound = null;
+    let introTriggered = false;
+
+    function generateQR(){
+      const qrContainer = $('qrcode');
+      if (!qrContainer) return;
+      const url = new URL(window.location.href);
+      url.hash = 'player';
+      const playerUrl = url.href;
+      qrContainer.innerHTML = '';
+      if (typeof QRCode !== 'undefined'){
+        try {
+          new QRCode(qrContainer, {
+            text: playerUrl,
+            width: 160, height: 160,
+            colorDark: "#050d1a", colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        } catch(_){}
+      }
+    }
+
+    function applyState(s){
+      if (!s) return;
+
+      const questionKey = s.round === 'final'
+        ? (s.final ? 'final-' + (s.final.question ? s.final.question.q : 'elim') : 'final')
+        : (s.current ? s.current.ci + '|' + s.current.qi : null);
+      const isNewQuestion = questionKey && questionKey !== prevQuestionKey;
+      const isNewBuzz = s.buzz && lastBuzzId !== s.buzz.id;
+
+      prevQuestionKey = questionKey;
+      lastBuzzId = s.buzz ? s.buzz.id : null;
+
+      if (s.phase === 'pre'){
+        $('preGameScreen').classList.add('show');
+        $('introScreen').classList.remove('show');
+        $('mainContent').style.opacity = '0';
+        $('mainContent').style.pointerEvents = 'none';
+        introTriggered = false;
+        return;
+      } else {
+        $('preGameScreen').classList.remove('show');
+      }
+
+      if (s.phase === 'intro' && !introTriggered){
+        introTriggered = true;
+        $('mainContent').style.opacity = '0';
+        $('mainContent').style.pointerEvents = 'none';
+        $('introScreen').classList.add('show');
+        const introList = $('introList');
+        introList.innerHTML = '';
+        s.board.forEach((c, i) => {
+          const div = document.createElement('div');
+          div.className = 'intro-item';
+          div.textContent = c.name;
+          div.style.animationDelay = (i * 1.2) + 's';
+          introList.appendChild(div);
+        });
+      } else if (s.phase === 'play' || s.phase === 'final' || s.phase === 'gameover'){
+        if (introTriggered || $('introScreen').classList.contains('show')){
+          $('introScreen').classList.remove('show');
+          introTriggered = false;
+          if (s.phase === 'play') showRoundBanner(s.round);
+        }
+        $('mainContent').style.opacity = '1';
+        $('mainContent').style.pointerEvents = 'auto';
+      }
+
+      if (s.phase === 'gameover'){
+        showWinner(s.players);
+        return;
+      } else {
+        $('winnerScreen').classList.remove('show');
+      }
+
+      if (lastRound !== null && s.round !== lastRound && s.phase !== 'intro'){
+        showRoundBanner(s.round);
+      }
+      lastRound = s.round;
+      curState = s;
+
+      render();
+      if (isNewQuestion) flashQuestion();
+      if (isNewBuzz) flashBuzz(s.buzz.id);
+    }
+
+    function showRoundBanner(r){
+      const b = $('roundBanner');
+      if (r === 'final'){
+        $('rbTitle').textContent = 'ФИНАЛ';
+        $('rbSub').textContent = 'Общий вопрос · ставки';
+      } else {
+        $('rbTitle').textContent = 'РАУНД ' + r;
+        $('rbSub').textContent = r === 1 ? 'Базовая стоимость' : 'Очки × ' + r;
+      }
+      b.classList.add('show');
+      setTimeout(() => b.classList.remove('show'), 2500);
+    }
+
+    function showWinner(players){
+      $('mainContent').style.opacity = '0';
+      $('mainContent').style.pointerEvents = 'none';
+      const best = [...players].sort((a,b) => b.score - a.score)[0];
+      $('winnerName').textContent = best.name;
+      $('winnerScore').textContent = best.score + ' очков';
+      const win = $('winnerScreen');
+      if (!win.classList.contains('show')){
+        win.classList.add('show');
+        for (let i = 0; i < 40; i++){
+          const c = document.createElement('div');
+          c.style.cssText = `position:fixed;top:-10px;left:${Math.random()*100}vw;width:10px;height:10px;background:${['#fbbf24','#7dd3fc','#dc2626','#4ade80'][i%4]};z-index:999;animation:confettiFall ${2+Math.random()*2}s linear forwards;`;
+          document.body.appendChild(c);
+          setTimeout(()=>c.remove(), 4000);
+        }
+      }
+    }
+
+    function flashQuestion(){
+      const card = $('qCard');
+      if (!card) return;
+      card.style.animation = 'none';
+      void card.offsetWidth;
+      card.style.animation = 'pop .6s cubic-bezier(.2,1.2,.4,1)';
+    }
+
+    function flashBuzz(playerId){
+      const el = ROOT.querySelector(`.pscore-card[data-id="${playerId}"]`);
+      if (!el) return;
+      el.classList.add('buzzflash');
+      setTimeout(() => el.classList.remove('buzzflash'), 1100);
+    }
+
+    function renderScores(){
+      const el = $('scores');
+      const players = curState ? curState.players : [];
+      const answeringId = curState && curState.buzz ? curState.buzz.id : null;
+      el.innerHTML = '';
+      players.forEach((p, idx) => {
+        const card = document.createElement('div');
+        card.className = 'pscore-card' + (p.id === answeringId ? ' answering' : '');
+        card.dataset.id = p.id;
+        card.style.setProperty('--pc', PCOLORS[idx] || '#888');
+        card.innerHTML = `
+          <div class="pav">${p.id}</div>
+          <div class="pmain">
+            <div class="pname">${esc(p.name)}</div>
+            <div class="ptag">${p.id === answeringId ? '🎯 отвечает' : 'игрок'}</div>
+          </div>
+          <div class="pscore ${p.score < 0 ? 'neg' : ''}">${p.score}</div>`;
+        el.appendChild(card);
+      });
+    }
+
+    function renderStage(){
+      const s = curState;
+      const isFinal = s && s.round === 'final';
+
+      if (isFinal){
+        $('stageWrap').classList.remove('show');
+        $('boardWrap').style.display = 'none';
+        renderFinal();
+        return;
+      }
+
+      $('boardWrap').style.display = 'block';
+      $('finalWrap').classList.remove('show');
+
+      if (!s || !s.current){
+        $('stageWrap').classList.remove('show');
+        return;
+      }
+
+      $('stageWrap').classList.add('show');
+      const isAnswer = s.stage === 'answer';
+      const hasBuzz = !!s.buzz;
+      const pill = $('statusPill');
+      const pillText = $('statusText');
+
+      if (isAnswer){ pill.className = 'status-pill hot'; pillText.textContent = 'ОТВЕТ ОТКРЫТ'; }
+      else if (hasBuzz){ pill.className = 'status-pill hot'; pillText.textContent = '⚡ НАЖАТИЕ'; }
+      else { pill.className = 'status-pill'; pillText.textContent = 'ЖДЁМ НАЖАТИЯ'; }
+
+      $('qCard').innerHTML = `
+        <div class="qmeta">
+          <span class="qcat">${esc(s.current.cat)}</span>
+          <span class="qprice">${s.current.price}</span>
+        </div>
+        <div class="qtext">${esc(s.current.q)}</div>
+        ${isAnswer ? `<div class="atext">${esc(s.current.a)}</div>` : ''}
+        ${hasBuzz && !isAnswer ? `<div class="buzzbar">⚡ Отвечает: <b>${esc(s.buzz.name)}</b></div>` : ''}`;
+    }
+
+    function renderBoard(){
+      const el = $('board');
+      el.innerHTML = '';
+      const s = curState;
+      if (!s || !s.board || s.round === 'final') return;
+
+      const answered = new Set(s.answered || []);
+      const curCi = s.current ? s.current.ci : null;
+      const curQi = s.current ? s.current.qi : null;
+
+      el.style.gridTemplateColumns = `200px repeat(5, 1fr)`;
+
+      s.board.forEach((cat, ci) => {
+        const catEl = document.createElement('div');
+        catEl.className = 'bcat';
+        catEl.textContent = cat.name;
+        el.appendChild(catEl);
+        cat.prices.forEach((price, qi) => {
+          const isAnswered = answered.has(ci + '-' + qi);
+          const isCurrent = (curCi === ci && curQi === qi);
+          const d = document.createElement('div');
+          d.className = 'bcell' + (isAnswered && !isCurrent ? ' answered' : '') + (isCurrent ? ' active' : '');
+          d.textContent = price;
+          el.appendChild(d);
+        });
+      });
+    }
+
+    function renderFinal(){
+      const s = curState;
+      const f = s.final;
+      if (!f) return;
+      $('finalWrap').classList.add('show');
+      $('roundTag').textContent = 'ФИНАЛ';
+
+      const turnEl = $('finalTurn');
+      if (f.stage === 'elimination'){
+        turnEl.innerHTML = `Ход: <b>${esc(f.turnPlayerName || '')}</b>`;
+      } else {
+        turnEl.textContent = 'Общий вопрос · ставки';
+      }
+
+      const topicsEl = $('finalTopics');
+      topicsEl.innerHTML = '';
+      f.topics.forEach(t => {
+        const d = document.createElement('div');
+        d.className = 'f-topic' + (t.eliminated ? ' eliminated' : '') + (t.isFinal ? ' isFinal' : '');
+        d.textContent = t.name;
+        topicsEl.appendChild(d);
+      });
+
+      const qWrap = $('finalQuestionWrap');
+      if (f.question && (f.stage === 'question' || f.stage === 'answer')){
+        qWrap.innerHTML = `<div class="f-question">${esc(f.question.q)}</div>`;
+      } else qWrap.innerHTML = '';
+
+      const aWrap = $('finalAnswerWrap');
+      if (f.stage === 'answer' && f.question){
+        aWrap.innerHTML = `<div class="f-answer">${esc(f.question.a)}</div>`;
+      } else aWrap.innerHTML = '';
+
+      const bWrap = $('finalBetsWrap');
+      if ((f.stage === 'question' || f.stage === 'answer') && s.players){
+        let html = '<div class="f-bets">';
+        s.players.forEach((p, idx) => {
+          const bet = f.bets[p.id];
+          html += `<div class="f-bet-item" style="--pc:${PCOLORS[idx]}">
+            <span class="f-bet-name">${esc(p.name)}</span>
+            ${bet !== undefined ? `<span class="f-bet-amount">${bet}</span>` : `<span class="f-bet-amount waiting">ждём…</span>`}
+          </div>`;
+        });
+        html += '</div>';
+        bWrap.innerHTML = html;
+      } else bWrap.innerHTML = '';
+    }
+
+    function render(){
+      const s = curState;
+      if (s){
+        const rt = s.round === 'final' ? 'ФИНАЛ' : 'Раунд ' + s.round + (s.round > 1 ? ' ×' + s.round : '');
+        $('roundTag').textContent = rt;
+      }
+      renderScores();
+      renderStage();
+      renderBoard();
+    }
+
+    function init(){
+      makeGarland($('garland'));
+      generateQR();
+
+      // Firebase State Listener
+      db.ref('gameState').on('value', (snapshot) => {
+        const val = snapshot.val();
+        if (val && val.snap) applyState(val.snap);
+      });
+
+      setInterval(() => {
+        // Update "LIVE" indicator based on recent state updates
+        db.ref('gameState/t').once('value').then(snap => {
+          const t = snap.val();
+          const on = t && (Date.now() - t) < 30000;
+          $('live').classList.toggle('on', on);
+          $('liveText').textContent = on ? 'В ЭФИРЕ' : 'СИНХРОНИЗАЦИЯ…';
+        });
+      }, 2500);
+    }
+
+    function refresh(){
+      // not needed with Firebase
+    }
+
+    return { init, refresh };
+  })();
+
+  // ============================================================
+  // ROUTER
+  // ============================================================
+  const modules = { host: hostModule, player: playerModule, spectator: spectatorModule };
+  const initialized = { host: false, player: false, spectator: false };
+
+  function activateRole(role){
+    const selector = document.getElementById('roleSelector');
+    selector.hidden = !!role;
+
+    ['host','player','spectator'].forEach(r => {
+      const app = document.getElementById(r + 'App');
+      const style = document.getElementById(r + 'Styles');
+      if (r === role){
+        app.hidden = false;
+        style.setAttribute('media', 'all');
+        if (!initialized[r]){
+          initialized[r] = true;
+          try { modules[r].init(); }
+          catch(e){ console.error('Init failed for', r, e); }
+        } else if (modules[r].refresh){
+          try { modules[r].refresh(); } catch(e){}
+        }
+      } else {
+        app.hidden = true;
+        style.setAttribute('media', 'not all');
+      }
+    });
+  }
+
+  function handleHash(){
+    const h = location.hash.slice(1);
+    if (h === 'host' || h === 'player' || h === 'spectator'){
+      activateRole(h);
+    } else {
+      activateRole(null);
+    }
+  }
+
+  // role selector buttons
+  document.getElementById('roleSelector').addEventListener('click', e => {
+    const btn = e.target.closest('[data-role]');
+    if (!btn) return;
+    location.hash = btn.dataset.role;
+  });
+
+  // "switch role" links
+  document.querySelectorAll('[data-role-switch]').forEach(l => {
+    l.addEventListener('click', e => {
+      e.preventDefault();
+      if (location.hash && location.hash !== '#'){
+        location.hash = '';
+      } else {
+        handleHash();
+      }
+    });
+  });
+
+  window.addEventListener('hashchange', handleHash);
+  handleHash();
+})();
+</script>
+</body>
+</html>
