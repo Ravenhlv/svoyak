@@ -688,7 +688,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
   <div class="garland" id="garland"><div class="garland-wire"></div></div>
 
   <div class="overlay-full" id="introScreen">
-    <div class="intro-title">ТЕМЫ ВЫПУСКА</div>
+    <div class="intro-title" id="hostIntroTitle">ТЕМЫ РАУНДА</div>
     <div class="intro-list" id="introList"></div>
   </div>
   <div class="round-banner" id="roundBanner">
@@ -844,7 +844,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
   </div>
 
   <div class="overlay-full" id="introScreen">
-    <div class="intro-title">ТЕМЫ ВЫПУСКА</div>
+    <div class="intro-title" id="specIntroTitle">ТЕМЫ РАУНДА</div>
     <div class="intro-list" id="introList"></div>
   </div>
 
@@ -951,6 +951,8 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
   const hostModule = (function(){
     const ROOT = document.getElementById('hostApp');
     const $ = id => ROOT.querySelector('#' + id);
+    let introTimeout = null;
+    let bannerTimeout = null;
 
     const DATA = {
       1: [
@@ -1274,16 +1276,18 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
     }
 
     function showRoundBanner(r){
+      if (bannerTimeout) clearTimeout(bannerTimeout);
       const banner = $('roundBanner');
       const title = $('rbTitle');
       const sub = $('rbSub');
       if (r === 'final'){ title.textContent = 'ФИНАЛ'; sub.textContent = 'Общий вопрос · ставки'; }
       else { title.textContent = 'РАУНД ' + r; sub.textContent = r === 1 ? 'Базовая стоимость' : 'Очки × ' + r; }
       banner.classList.add('show');
-      setTimeout(() => banner.classList.remove('show'), 2500);
+      bannerTimeout = setTimeout(() => banner.classList.remove('show'), 2500);
     }
 
     function showRoundIntro(callback) {
+      if (introTimeout) clearTimeout(introTimeout);
       state.phase = 'intro';
       publish();
 
@@ -1291,6 +1295,8 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
       const introList = $('introList');
       introList.innerHTML = '';
       introScreen.classList.add('show');
+
+      $('hostIntroTitle').textContent = 'ТЕМЫ ' + state.round + ' РАУНДА';
 
       const roundData = getRoundData();
       roundData.forEach((c, i) => {
@@ -1301,7 +1307,8 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
         introList.appendChild(div);
       });
 
-      setTimeout(() => {
+      introTimeout = setTimeout(() => {
+        introTimeout = null;
         introScreen.classList.remove('show');
         state.phase = 'play';
         publish();
@@ -1321,8 +1328,8 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
       $('finalOverlay').classList.remove('show');
       renderBoard();
       renderRoundButtons();
-      publish();
       
+      // УБРАЛИ publish() отсюда, чтобы зритель не получал промежуточный стейт
       showRoundIntro(() => showRoundBanner(r));
     }
 
@@ -1929,6 +1936,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
   const spectatorModule = (function(){
     const ROOT = document.getElementById('spectatorApp');
     const $ = id => ROOT.querySelector('#' + id);
+    let bannerTimeout = null;
 
     let curState = null;
     let lastBuzzId = null;
@@ -1983,6 +1991,9 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
         $('mainContent').style.opacity = '0';
         $('mainContent').style.pointerEvents = 'none';
         $('introScreen').classList.add('show');
+        
+        $('specIntroTitle').textContent = 'ТЕМЫ ' + s.round + ' РАУНДА';
+        
         const introList = $('introList');
         introList.innerHTML = '';
         s.board.forEach((c, i) => {
@@ -2021,6 +2032,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
     }
 
     function showRoundBanner(r){
+      if (bannerTimeout) clearTimeout(bannerTimeout);
       const b = $('roundBanner');
       if (r === 'final'){
         $('rbTitle').textContent = 'ФИНАЛ';
@@ -2030,7 +2042,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
         $('rbSub').textContent = r === 1 ? 'Базовая стоимость' : 'Очки × ' + r;
       }
       b.classList.add('show');
-      setTimeout(() => b.classList.remove('show'), 2500);
+      bannerTimeout = setTimeout(() => b.classList.remove('show'), 2500);
     }
 
     function showWinner(players){
