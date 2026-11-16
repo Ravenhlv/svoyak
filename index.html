@@ -264,6 +264,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
   border:1px solid rgba(251,191,36,.55);background:rgba(251,191,36,.12);font-variant-numeric:tabular-nums;
   text-shadow:0 0 14px rgba(251,191,36,.4)}
 .overlay .qtext{font-size:clamp(22px,3.1vw,44px);font-weight:800;line-height:1.32;color:#e8f0f7;text-shadow:0 4px 22px rgba(0,0,0,.8)}
+.overlay .qtext img { max-width: 100%; max-height: 40vh; border-radius: 12px; object-fit: contain; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
 .abox{margin-top:24px;padding:16px 20px;border-radius:16px;border:1px dashed rgba(125,211,252,.4);
   background:rgba(125,211,252,.06);transition:all .4s cubic-bezier(.2,1,.4,1)}
 .abox .alabel{font-size:10.5px;letter-spacing:.22em;font-weight:800;color:rgba(125,211,252,.75);margin-bottom:8px}
@@ -394,6 +395,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
 .qmeta .qprice{color:var(--gold);padding:5px 15px;border-radius:999px;border:1px solid rgba(251,191,36,.55);background:rgba(251,191,36,.12)}
 .qmeta .qround{color:#67e8f9;padding:5px 13px;border-radius:999px;border:1px solid rgba(103,232,249,.5);background:rgba(6,182,212,.15)}
 #qCard .qtext{font-size:clamp(19px,4.6vw,32px);font-weight:800;line-height:1.32;color:#e8f0f7;text-shadow:0 4px 22px rgba(0,0,0,.75)}
+#qCard .qtext img { max-width: 100%; max-height: 40vh; border-radius: 12px; object-fit: contain; margin-bottom: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
 #qCard .atext{margin-top:6px;padding:14px 18px;border-radius:14px;font-size:clamp(16px,3.4vw,26px);font-weight:900;line-height:1.3;
   color:#dcfce7;background:rgba(74,222,128,.14);border:1px solid rgba(74,222,128,.55);
   box-shadow:0 0 40px rgba(74,222,128,.18);animation:pop .35s cubic-bezier(.2,1.2,.4,1)}
@@ -536,6 +538,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
   border:1px solid rgba(125,211,252,.28);box-shadow:0 40px 100px rgba(0,0,0,.65);
   animation:pop .5s cubic-bezier(.2,1.2,.4,1);position:relative}
 .stage .qtext{font-size:clamp(24px,3.4vw,54px);font-weight:800;line-height:1.28;color:#f5faff;text-shadow:0 6px 30px rgba(0,0,0,.85)}
+.stage .qtext img { max-width: 100%; max-height: 50vh; border-radius: 16px; object-fit: contain; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
 .stage .atext{margin-top:clamp(18px,2.4vh,32px);padding:clamp(16px,2vh,24px) clamp(20px,2.4vw,36px);border-radius:clamp(14px,1.4vw,20px);
   font-size:clamp(22px,2.8vw,42px);font-weight:900;line-height:1.3;color:#dcfce7;background:rgba(74,222,128,.15);
   border:2px solid rgba(74,222,128,.6);box-shadow:0 0 60px rgba(74,222,128,.25);animation:pop .35s ease}
@@ -699,8 +702,8 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
     <span class="role">ВЕДУЩИЙ</span>
     <div class="round-btns">
       <button class="round-btn" data-round="1">Раунд 1</button>
-      <button class="round-btn active" data-round="2">Раунд 2 ×2</button>
-      <button class="round-btn" data-round="3">Раунд 3 ×3</button>
+      <button class="round-btn active" data-round="2">Раунд 2</button>
+      <button class="round-btn" data-round="3">Раунд 3</button>
       <button class="round-btn final" data-round="final">🏆 Финал</button>
     </div>
     <div class="player-count">
@@ -727,7 +730,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
       <div class="panel-title">❄️ Игроки</div>
       <div id="players"></div>
       <div class="panel-hint">
-        Раунды: 1 — база, 2 — ×2, 3 — ×3. Финал — общий вопрос со ставками.
+        тут могла быть ваша реклама.
       </div>
     </aside>
   </div>
@@ -964,33 +967,33 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
           { price:400, q:"На каком материке пустыня Сахара?", a:"В Африке" },
           { price:500, q:"Какой пролив разделяет Евразию и Северную Америку?", a:"Берингов пролив" }
         ]},
-        { name:"Наука", questions:[
-          { price:100, q:"Химический символ золота?", a:"Au (аурум)" },
-          { price:200, q:"Сколько планет в Солнечной системе?", a:"Восемь" },
-          { price:300, q:"Кто открыл закон всемирного тяготения?", a:"Исаак Ньютон" },
-          { price:400, q:"Какой газ преобладает в атмосфере Земли?", a:"Азот (~78%)" },
-          { price:500, q:"Чему равно число Авогадро?", a:"6,02 × 10²³ моль⁻¹" }
+        { name:"Где логика?", questions:[
+          { price:100,  q:"Назови что изображено?", img:"ne.png", a:"логическое НЕ"  },
+          { price:200,  q:"Назови что изображено?", img:"ili.png", a:"логическое ИЛИ" },
+          { price:300,  q:"Назови что изображено?", img:"ine.png", a:"логическое И-НЕ" },
+          { price:400,  q:"Назови что изображено?", img:"trig.png", a:"триггер"  },
+          { price:500,  q:"Назови что изображено?", img:"she.png", a:"шифратор" }
         ]},
-        { name:"Литература", questions:[
-          { price:100, q:"Кто написал «Войну и мир»?", a:"Л. Н. Толстой" },
-          { price:200, q:"Автор романа «Мастер и Маргарита»?", a:"М. А. Булгаков" },
-          { price:300, q:"Настоящая фамилия Максима Горького?", a:"Пешков" },
-          { price:400, q:"«Все счастливые семьи похожи друг на друга…» — откуда?", a:"«Анна Каренина» Л. Н. Толстого" },
-          { price:500, q:"Кто написал «Тихий Дон»?", a:"М. А. Шолохов" }
+        { name:"Виды изображения для СУ", questions:[
+          { price:100, q:"Что показывает функциональная схема?", a:"фунции и их связь" },
+          { price:200, q:"Что показывает принципиальная схема?", a:"все элементы и их подключения" },
+          { price:300, q:"Назови 4 способа изображения схем", a:"словестное,графы, циклограммы,принципиальная " },
+          { price:400, q:"[МОДИФИКАТОР]", a:"забери 500 баллов у другого игрока" },
+          { price:500, q:"Что такое Э1?", a:"структурная схема" }
         ]},
-        { name:"Кино", questions:[
-          { price:100, q:"Кто сыграл Джека в «Титанике»?", a:"Леонардо ДиКаприо" },
-          { price:200, q:"Режиссёр «Интерстеллара»?", a:"Кристофер Нолан" },
-          { price:300, q:"Сколько полнометражных фильмов о Гарри Поттере?", a:"Восемь" },
-          { price:400, q:"Какой советский фильм получил «Оскар» в 1969?", a:"«Война и мир» С. Бондарчука" },
-          { price:500, q:"«Оскар» за лучший фильм 2020 года (за 2019)?", a:"«Паразиты» (Пон Джун Хо)" }
+        { name:"Промышленное Оборудование", questions:[
+          { price:100, q:"Назови 5 датчиков?", a:"Тока, напряжения, скорости, момента, давления" },
+          { price:200, q:"Назови 3 усилителя/преобразователя", a:"ПЧ, ШИП, реле" },
+          { price:300, q:"[МОДИФИКАТОР]", a:"+ на -" },
+          { price:400, q:"Назови 3 исполнительных механизма", a:"ЭП, кланан, поршень" },
+          { price:500, q:"Назови 3 коммутирующ. оборудования", a:"соединение, защитное, устройства ввода" }
         ]},
-        { name:"Спорт", questions:[
-          { price:100, q:"Сколько игроков одной команды на поле в футболе?", a:"Одиннадцать" },
-          { price:200, q:"Город зимних Олимпийских игр 2014?", a:"Сочи" },
-          { price:300, q:"Прозвище боксёра «Величайший»?", a:"Мохаммед Али" },
-          { price:400, q:"Сколько раз Бразилия выигрывала ЧМ по футболу (на 2022)?", a:"Пять раз" },
-          { price:500, q:"Сколько сетов нужно выиграть в мужском финале Большого шлема?", a:"Три (из пяти)" }
+        { name:"Тебе не повезет", questions:[
+          { price:100, q:"красное, черное или зеро?", a:"черное" },
+          { price:200, q:"красное, черное или зеро?", a:"черное" },
+          { price:300, q:"красное, черное или зеро?", a:"красное" },
+          { price:400, q:"красное, черное или зеро?", a:"зеро" },
+          { price:500, q:"красное, черное или зеро?", a:"черное" }
         ]}
       ],
       2: [
@@ -1138,7 +1141,9 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
           qi: state.current.qi,
           cat: getRoundData()[state.current.ci].name,
           price: q.price,
-          q: q.q, a: q.a
+          q: q.q, 
+          img: q.img,
+          a: q.a
         } : null,
         stage: state.stage,
         buzz: state.buzz,
@@ -1327,7 +1332,14 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
       overlay.classList.add('show');
       $('qCat').textContent = cat.name;
       $('qPrice').textContent = q.price;
-      $('qText').textContent = q.q;
+      
+      const qTextEl = $('qText');
+      if (q.img) {
+        qTextEl.innerHTML = `<img src="${q.img}"><div>${esc(q.q || '')}</div>`;
+      } else {
+        qTextEl.textContent = q.q;
+      }
+      
       $('aText').textContent = q.a;
       const abox = $('abox');
       abox.classList.toggle('revealed', isAnswer);
@@ -1724,13 +1736,15 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
 
       const isAnswer = s.stage === 'answer';
       qCard.className = 'qcard';
+      
+      const imageHtml = s.current.img ? `<img src="${s.current.img}">` : '';
       qCard.innerHTML = `
         <div class="qmeta">
           <span class="qround">Раунд ${s.round}</span>
           <span class="qcat">${esc(s.current.cat)}</span>
           <span class="qprice">${s.current.price}</span>
         </div>
-        <div class="qtext">${esc(s.current.q)}</div>
+        <div class="qtext">${imageHtml}${esc(s.current.q || '')}</div>
         ${isAnswer ? `<div class="atext">${esc(s.current.a)}</div>` : ''}`;
 
       if (s.buzz){
@@ -2094,12 +2108,14 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
       else if (hasBuzz){ pill.className = 'status-pill hot'; pillText.textContent = '⚡ НАЖАТИЕ'; }
       else { pill.className = 'status-pill'; pillText.textContent = 'ЖДЁМ НАЖАТИЯ'; }
 
+      const imageHtml = s.current.img ? `<img src="${s.current.img}">` : '';
+
       $('qCard').innerHTML = `
         <div class="qmeta">
           <span class="qcat">${esc(s.current.cat)}</span>
           <span class="qprice">${s.current.price}</span>
         </div>
-        <div class="qtext">${esc(s.current.q)}</div>
+        <div class="qtext">${imageHtml}${esc(s.current.q || '')}</div>
         ${isAnswer ? `<div class="atext">${esc(s.current.a)}</div>` : ''}
         ${hasBuzz && !isAnswer ? `<div class="buzzbar">⚡ Отвечает: <b>${esc(s.buzz.name)}</b></div>` : ''}`;
     }
