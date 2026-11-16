@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>СВОЯК ❄️</title>
 
-<!-- Firebase SDK (Библиотеки для работы с базой данных) -->
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 <!-- Библиотека для QR-кодов -->
@@ -702,8 +702,8 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
     <span class="logo">СВОЯК</span>
     <span class="role">ВЕДУЩИЙ</span>
     <div class="round-btns">
-      <button class="round-btn" data-round="1">Раунд 1</button>
-      <button class="round-btn active" data-round="2">Раунд 2</button>
+      <button class="round-btn active" data-round="1">Раунд 1</button>
+      <button class="round-btn" data-round="2">Раунд 2</button>
       <button class="round-btn" data-round="3">Раунд 3</button>
       <button class="round-btn final" data-round="final">🏆 Финал</button>
     </div>
@@ -1142,8 +1142,8 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
           qi: state.current.qi,
           cat: getRoundData()[state.current.ci].name,
           price: q.price,
-          q: q.q, 
-          img: q.img || '',
+          q: q.q,
+          ...(q.img ? { img: q.img } : {}),
           a: q.a
         } : null,
         stage: state.stage,
@@ -2112,18 +2112,27 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
       else if (hasBuzz){ pill.className = 'status-pill hot'; pillText.textContent = '⚡ НАЖАТИЕ'; }
       else { pill.className = 'status-pill'; pillText.textContent = 'ЖДЁМ НАЖАТИЯ'; }
 
-      const imgHtml = s.current.img ? `<img src="${s.current.img}" style="max-width: 100%; max-height: 50vh; border-radius: 16px; object-fit: contain; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);">` : '';
-      const textHtml = s.current.q ? `<div class="qtext">${esc(s.current.q)}</div>` : '';
-
-      $('qCard').innerHTML = `
+      let html = `
         <div class="qmeta" style="margin-bottom: 20px;">
           <span class="qcat">${esc(s.current.cat)}</span>
           <span class="qprice">${s.current.price}</span>
         </div>
-        ${imgHtml}
-        ${textHtml}
-        ${isAnswer ? `<div class="atext" style="margin-top: 20px;">${esc(s.current.a)}</div>` : ''}
-        ${hasBuzz && !isAnswer ? `<div class="buzzbar" style="margin-top: 20px;">⚡ Отвечает: <b>${esc(s.buzz.name)}</b></div>` : ''}`;
+      `;
+      
+      if (s.current.img) {
+        html += `<img src="${s.current.img}" style="max-width: 100%; max-height: 50vh; border-radius: 16px; object-fit: contain; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);">`;
+      }
+      if (s.current.q) {
+        html += `<div class="qtext">${esc(s.current.q)}</div>`;
+      }
+      if (isAnswer) {
+        html += `<div class="atext" style="margin-top: 20px;">${esc(s.current.a)}</div>`;
+      }
+      if (hasBuzz && !isAnswer) {
+        html += `<div class="buzzbar" style="margin-top: 20px;">⚡ Отвечает: <b>${esc(s.buzz.name)}</b></div>`;
+      }
+
+      $('qCard').innerHTML = html;
     }
 
     function renderBoard(){
