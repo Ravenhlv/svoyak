@@ -1283,6 +1283,32 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
       setTimeout(() => banner.classList.remove('show'), 2500);
     }
 
+    function showRoundIntro(callback) {
+      state.phase = 'intro';
+      publish();
+
+      const introScreen = $('introScreen');
+      const introList = $('introList');
+      introList.innerHTML = '';
+      introScreen.classList.add('show');
+
+      const roundData = getRoundData();
+      roundData.forEach((c, i) => {
+        const div = document.createElement('div');
+        div.className = 'intro-item';
+        div.textContent = c.name;
+        div.style.animationDelay = (i * 1.2) + 's';
+        introList.appendChild(div);
+      });
+
+      setTimeout(() => {
+        introScreen.classList.remove('show');
+        state.phase = 'play';
+        publish();
+        if (callback) callback();
+      }, roundData.length * 1200 + 1000);
+    }
+
     function switchRound(r){
       if (state.round === r) return;
       if (r === 'final'){ startFinal(); return; }
@@ -1295,8 +1321,9 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
       $('finalOverlay').classList.remove('show');
       renderBoard();
       renderRoundButtons();
-      showRoundBanner(r);
       publish();
+      
+      showRoundIntro(() => showRoundBanner(r));
     }
 
     function openQuestion(ci, qi){
@@ -1537,28 +1564,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
 
     function startGame(){
       if (state.phase !== 'pre') return;
-      state.phase = 'intro';
-      publish();
-
-      const introScreen = $('introScreen');
-      const introList = $('introList');
-      introList.innerHTML = '';
-      introScreen.classList.add('show');
-
-      DATA[1].forEach((c, i) => {
-        const div = document.createElement('div');
-        div.className = 'intro-item';
-        div.textContent = c.name;
-        div.style.animationDelay = (i * 1.2) + 's';
-        introList.appendChild(div);
-      });
-
-      setTimeout(() => {
-        introScreen.classList.remove('show');
-        state.phase = 'play';
-        publish();
-        showRoundBanner(1);
-      }, DATA[1].length * 1200 + 1000);
+      showRoundIntro(() => showRoundBanner(1));
     }
 
     function init(){
