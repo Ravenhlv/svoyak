@@ -1143,7 +1143,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
           cat: getRoundData()[state.current.ci].name,
           price: q.price,
           q: q.q, 
-          img: q.img,
+          img: q.img || '',
           a: q.a
         } : null,
         stage: state.stage,
