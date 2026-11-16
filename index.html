@@ -1161,6 +1161,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
           question: state.final.finalTopicIdx !== null ? {
             name: state.final.topics[state.final.finalTopicIdx].name,
             q: state.final.topics[state.final.finalTopicIdx].q,
+            ...(state.final.topics[state.final.finalTopicIdx].img ? { img: state.final.topics[state.final.finalTopicIdx].img } : {}),
             a: state.final.topics[state.final.finalTopicIdx].a
           } : null
         } : null
@@ -1477,7 +1478,10 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
         const topic = f.topics[f.finalTopicIdx];
         let html = `<div class="final-header">ФИНАЛ</div>`;
         html += `<div class="final-remain">Тема: ${esc(topic.name)}</div>`;
-        html += `<div class="final-q">${esc(topic.q)}</div>`;
+        
+        const imgHtml = topic.img ? `<img src="${topic.img}" style="display:block; margin: 0 auto 15px auto; max-width: 100%; max-height: 40vh; border-radius: 12px; object-fit: contain;">` : '';
+        html += `<div class="final-q">${imgHtml}${esc(topic.q)}</div>`;
+        
         if (f.stage === 'question'){
           const betsHtml = state.players.map((p, idx) => {
             const bet = f.bets[p.id];
@@ -1804,8 +1808,14 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
         <div class="fp-sub">Тема: <b>${esc(topic.name)}</b></div>
       </div>`;
 
-      if (f.stage === 'question'){
+      if (f.stage === 'question' || f.stage === 'answer'){
+        if (topic.img) {
+           html += `<img src="${topic.img}" style="max-width: 100%; max-height: 30vh; border-radius: 12px; object-fit: contain; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;">`;
+        }
         html += `<div class="fp-q">${esc(topic.q)}</div>`;
+      }
+
+      if (f.stage === 'question'){
         const myBet = f.bets[myId];
         if (myBet !== undefined){
           html += `<div class="fp-bet">
@@ -1838,7 +1848,6 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
           });
         }
       } else if (f.stage === 'answer'){
-        html += `<div class="fp-q">${esc(topic.q)}</div>`;
         html += `<div class="fp-a">✔ ${esc(topic.a)}</div>`;
         const myBet = f.bets[myId];
         if (myBet !== undefined){
@@ -2204,7 +2213,12 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(-
 
       const qWrap = $('finalQuestionWrap');
       if (f.question && (f.stage === 'question' || f.stage === 'answer')){
-        qWrap.innerHTML = `<div class="f-question">${esc(f.question.q)}</div>`;
+        let qHtml = '';
+        if (f.question.img) {
+            qHtml += `<img src="${f.question.img}" style="max-width: 100%; max-height: 40vh; border-radius: 12px; object-fit: contain; margin: 0 auto 15px auto; display: block; box-shadow: 0 8px 20px rgba(0,0,0,0.6);">`;
+        }
+        qHtml += `<div class="qtext" style="font-size:clamp(20px,2.6vw,38px);">${esc(f.question.q)}</div>`;
+        qWrap.innerHTML = `<div class="f-question" style="display:flex; flex-direction:column; align-items:center;">${qHtml}</div>`;
       } else qWrap.innerHTML = '';
 
       const aWrap = $('finalAnswerWrap');
